@@ -1,8 +1,9 @@
 '''Module to generate data sets'''
 import random
 
-def generator(amount: int=5, minimum: float=0.1,\
-     maximum: float=10.0, extra_edges_prob: float = 0.2) -> dict[str, dict[str, float]]:
+
+def generator(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0,
+              extra_edges_prob: float = 0.2, node_labels: bool = False) -> dict[str, dict[str, float]]:
     """
     Generate a connected, undirected weighted graph with optional extra edges.
 
@@ -12,6 +13,8 @@ def generator(amount: int=5, minimum: float=0.1,\
         maximum (float): The maximum value (distance) an edge can have.
         extra_edges_prob (float): Probability of adding an additional edge
         beyond the minimum spanning tree.
+        node_labels (bool): Determines whether nodes should have generated labels.
+        If False, nodes will be represented as numbers, if True - as randomly generated strings.
 
     Returns:
         dict: A dictionary where keys are node names (strings) and values are dictionaries
@@ -29,7 +32,13 @@ def generator(amount: int=5, minimum: float=0.1,\
         raise ValueError("Connectivity must be a value between 0 and 1.")
 
     #Initialize graph
-    graph = {f"{i}": {} for i in range(amount)}
+    if node_labels:
+        graph = {''.join([chr(random.randrange(97, 122))
+                 for _ in range(random.randrange(3, 10))]).capitalize(): {}
+                 for _ in range(amount)}
+    else:
+        graph = {f"{i}": {} for i in range(amount)}
+
     nodes = list(graph.keys())
 
     #Ensure graph is connected using a minimum spanning tree approach
@@ -53,12 +62,11 @@ def generator(amount: int=5, minimum: float=0.1,\
         available_nodes.remove(to_node)
 
     #Add random extra edges based on probability
-    for i in range(amount):
-        for j in range(i + 1, amount):
-            node_a, node_b = f"{i}", f"{j}"
-            if node_a == node_b:
+    for node_a in graph:
+        for node_b in graph:
+            if node_a == node_b or node_b in graph[node_a]:
                 continue
-            if random.random() <= extra_edges_prob and node_b not in graph[node_a]:
+            if random.random() <= extra_edges_prob:
                 weight = round(random.uniform(minimum, maximum), 2)
                 graph[node_a][node_b] = weight
                 graph[node_b][node_a] = weight
