@@ -65,45 +65,23 @@ def command_line_interface():
     pass
 
 
-def assign_color_to_clusters(clusters: list[dict]) -> None:
+def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -> None:
     """
-    Works in-place. Assigns a random color to every cluster of a parameter clusters.
-
-    :param clusters: list, A list of clusters to assign colors to.
-    :return: None
-    """
-    for cluster in clusters:
-        cluster["color"] = "#{:06x}".format(random.randint(0, 0xFFFFFF))
-
-
-def assign_color_to_nodes(clusters: list[dict]) -> dict[str, str]:
-    """
-
-    :param clusters: list, A list of clusters (dictionaries) with assigned color to each one.
-    :return: dict, A dictionary of every node as key and its color as value.
-    """
-    assigned_nodes = {}
-
-    for cluster in clusters:
-        for node in cluster["nodes"]:
-            assigned_nodes[node] = cluster["color"]
-
-    return assigned_nodes
-
-
-def visualize(graph: dict[str, dict[str, float]], colors: dict[str, str] = None) -> None:
-    """
-    Visualizes a weighted graph using the pyvis library. Optional parameter colors: if not None,
-    paints each node to its color. If you wish to call the function with this parameter, please
-    assign colors to your clusters list using the assign_color_to_clusters function and then
-    call this function like this:
-
-    visualize(graph, assign_color_to_nodes(your_clusters))
+    Visualizes a weighted graph using the pyvis library. Optional parameter clusters: if not None,
+    paints each node to a color corresponding to its cluster.
 
     :param graph: dict, The graph to visualize.
-    :param colors: dict, A dictionary of every node as key and its color as value.
+    :param clusters: list, Optional. A list of clusters of given graph.
     :return: None
     """
+    colors = {}
+
+    if clusters:
+        for cluster in clusters:
+            cluster["color"] = "#{:06x}".format(random.randint(0, 0xFFFFFF))
+            for node in cluster["nodes"]:
+                colors[node] = cluster["color"]
+
     net = Network(notebook=True)
 
     added_nodes = []
