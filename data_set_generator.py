@@ -1,7 +1,8 @@
 '''Module to generate data sets'''
 import random
 
-def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edges_prob: float = 0.2) -> dict[str, dict[str, float]]:
+def generator(amount: int=5, minimum: float=0.1,\
+     maximum: float=10.0, extra_edges_prob: float = 0.2) -> dict[str, dict[str, float]]:
     """
     Generate a connected, undirected weighted graph with optional extra edges.
 
@@ -9,7 +10,8 @@ def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edge
         amount (int): The number of nodes the graph will have.
         minimum (float): The minimum value (distance) an edge can have.
         maximum (float): The maximum value (distance) an edge can have.
-        extra_edges_prob (float): Probability of adding an additional edge beyond the minimum spanning tree.
+        extra_edges_prob (float): Probability of adding an additional edge
+        beyond the minimum spanning tree.
 
     Returns:
         dict: A dictionary where keys are node names (strings) and values are dictionaries
@@ -23,14 +25,14 @@ def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edge
         raise ValueError("Minimum value must be greater than 0")
     if minimum >= maximum:
         raise ValueError("Minimum value must be less than the maximum value.")
-    if not (0 <= extra_edges_prob <= 1):
+    if not 0 <= extra_edges_prob <= 1:
         raise ValueError("Connectivity must be a value between 0 and 1.")
 
-    # Initialize graph
+    #Initialize graph
     graph = {f"{i}": {} for i in range(amount)}
     nodes = list(graph.keys())
 
-    # Step 1: Ensure graph is connected using a minimum spanning tree approach
+    #Ensure graph is connected using a minimum spanning tree approach
     available_nodes = set(nodes)
     connected_nodes = {nodes.pop(0)}  # Start with the first node
 
@@ -49,15 +51,15 @@ def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edge
         connected_nodes.add(to_node)
         available_nodes.remove(to_node)
 
-    # Step 2: Add random extra edges based on probability
+    #Add random extra edges based on probability
     for i in range(amount):
         for j in range(i + 1, amount):
             node_a, node_b = f"{i}", f"{j}"
+            if node_a == node_b:
+                continue
             if random.random() <= extra_edges_prob and node_b not in graph[node_a]:
                 weight = round(random.uniform(minimum, maximum), 2)
                 graph[node_a][node_b] = weight
                 graph[node_b][node_a] = weight
 
     return graph
-
-print(generator())
