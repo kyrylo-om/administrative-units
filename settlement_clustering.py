@@ -75,18 +75,21 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
     :return: None
     """
     colors = {}
+    central_nodes = set()
 
     if clusters:
         for cluster in clusters:
             cluster["color"] = "#{:06x}".format(random.randint(0, 0xFFFFFF))
             for node in cluster["nodes"]:
                 colors[node] = cluster["color"]
+                if "center" in cluster and cluster["center"] == node:
+                    central_nodes.add(node)
 
     net = Network(notebook=True)
 
     added_nodes = []
     for node, edges in graph.items():
-        net.add_node(node, color=colors[node] if colors else "blue")
+        net.add_node(node, color=colors[node] if colors else "blue", size=30 if node in central_nodes else 20)
         added_nodes.append(node)
         for neighbour, distance in edges.items():
             if neighbour in added_nodes:
