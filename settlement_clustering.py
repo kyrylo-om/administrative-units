@@ -78,9 +78,8 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
 
     if clusters:
         for cluster in clusters:
-            cluster["color"] = "#{:06x}".format(random.randint(0, 0xFFFFFF))
             for node in cluster["nodes"]:
-                colors[node] = cluster["color"]
+                colors[node] = "#{:06x}".format(random.randint(0, 0xFFFFFF))
 
     net = Network(notebook=True)
 
