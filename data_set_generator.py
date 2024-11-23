@@ -42,7 +42,8 @@ def generator(amount: int=5, minimum: float=0.1,\
 
         # Create a random weight for the edge
         weight = round(random.uniform(minimum, maximum), 2)
-
+        if from_node == to_node:
+            continue
         # Add the edge
         graph[from_node][to_node] = weight
         graph[to_node][from_node] = weight
