@@ -3,6 +3,7 @@ A module for clustering settlements into administrative units.
 """
 
 from pyvis.network import Network
+import random
 
 
 def read_file(file_name: str) -> dict[str, dict[str, float]]:
