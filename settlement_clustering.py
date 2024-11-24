@@ -1,7 +1,7 @@
 """
 A module for clustering settlements into administrative units.
 """
-import heapq
+
 import random
 import numpy as np
 
@@ -41,9 +41,9 @@ def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> l
     """
     pass
 
-def dijkstra_no_heapq(graph_dict, start_node):
+def dijkstra(graph:dict[str, dict[str, float]], start_node:str) ->dict[str,float]:
     """
-    Compute shortest paths from the start_node to all other nodes without using heapq.
+    Compute shortest paths from the start_node to all other nodes using Dijkstra's algorithm.
 
     Args:
         graph_dict (dict): Adjacency dictionary representing the graph.
@@ -64,9 +64,9 @@ def dijkstra_no_heapq(graph_dict, start_node):
         >>> dijkstra_no_heapq(graph_dict, '0') == expected
         True
     """
-    distances = {node: float('inf') for node in graph_dict}
+    distances = {node: float('inf') for node in graph}
     distances[start_node] = 0
-    unvisited = set(graph_dict.keys())
+    unvisited = set(graph.keys())
 
     while unvisited:
         current_node = min(unvisited, key=lambda node: distances[node])
@@ -76,7 +76,7 @@ def dijkstra_no_heapq(graph_dict, start_node):
 
         unvisited.remove(current_node)
 
-        for neighbor, weight in graph_dict[current_node].items():
+        for neighbor, weight in graph[current_node].items():
             if neighbor in unvisited:
                 new_distance = distances[current_node] + weight
                 if new_distance < distances[neighbor]:
@@ -84,55 +84,9 @@ def dijkstra_no_heapq(graph_dict, start_node):
 
     return distances
 
-def dijkstra_with_heapq(graph_dict, start_node):
+def compute_distance_matrix(graph:dict[str, dict[str, float]]) -> list[list]:
     """
-    Compute shortest paths from the start_node to all other nodes using heapq.
-
-    Args:
-        graph_dict (dict): Adjacency dictionary representing the graph.
-        start_node (str): The starting node for Dijkstra's algorithm.
-
-    Returns:
-        dict: Shortest distances from start_node to all other nodes.
-
-    Example:
-        >>> graph_dict = {
-        ...     '0': {'4': 4.94, '3': 4.83},
-        ...     '1': {'4': 9.68},
-        ...     '2': {'4': 4.72, '3': 8.66},
-        ...     '3': {'2': 8.66, '0': 4.83},
-        ...     '4': {'0': 4.94, '2': 4.72, '1': 9.68},
-        ... }
-        >>> expected = {'0': 0, '1': 14.62, '2': 9.66, '3': 4.83, '4': 4.94}
-        >>> dijkstra_with_heapq(graph_dict, '0') == expected
-        True
-    """
-    # Initialize distances to infinity and set the distance to the start_node to 0
-    distances = {node: float('inf') for node in graph_dict}
-    distances[start_node] = 0
-
-    # Priority queue to explore nodes by shortest distance
-    priority_queue = [(0, start_node)]  # (distance, node)
-
-    while priority_queue:
-        current_distance, current_node = heapq.heappop(priority_queue)
-
-        # Skip if the distance is not optimal
-        if current_distance > distances[current_node]:
-            continue
-
-        # Explore neighbors
-        for neighbor, weight in graph_dict[current_node].items():
-            distance = current_distance + weight
-            if distance < distances[neighbor]:
-                distances[neighbor] = round(distance,2)
-                heapq.heappush(priority_queue, (distance, neighbor))
-
-    return distances
-
-def compute_distance_matrix(graph):
-    """
-    Compute the pairwise distance matrix using Dijkstra's algorithm without heapq.
+    Compute the pairwise distance matrix using Dijkstra's algorithm.
 
     Args:
         graph (dict): Adjacency dictionary representing the graph.
@@ -183,7 +137,7 @@ def compute_distance_matrix(graph):
     distance_matrix = np.zeros((num_nodes, num_nodes))
 
     for node in nodes:
-        distances = dijkstra_no_heapq(graph, node)
+        distances = dijkstra(graph, node)
         for target_node, distance in distances.items():
             i, j = node_indices[node], node_indices[target_node]
             distance_matrix[i][j] = distance
