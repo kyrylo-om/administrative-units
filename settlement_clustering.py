@@ -74,14 +74,13 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
     :param clusters: list, Optional. A list of clusters of given graph.
     :return: None
     """
-    colors = {}
+    node_clusters = {}
     central_nodes = set()
 
     if clusters:
         for cluster in clusters:
-            cluster["color"] = "#{:06x}".format(random.randint(0, 0xFFFFFF))
             for node in cluster["nodes"]:
-                colors[node] = cluster["color"]
+                node_clusters[node] = clusters.index(cluster) + 1
                 if "center" in cluster and cluster["center"] == node:
                     central_nodes.add(node)
 
@@ -89,11 +88,12 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
 
     added_nodes = []
     for node, edges in graph.items():
-        net.add_node(node, color=colors[node] if colors else "blue", size=30 if node in central_nodes else 20)
+        title = f"Name: {node}" + (f"\nCluster: {node_clusters[node]}" if clusters else "") + f"\nConnections: {graph[node]}"
+        net.add_node(node, size=40 if node in central_nodes else 20, group=node_clusters[node], title=title)
         added_nodes.append(node)
         for neighbour, distance in edges.items():
             if neighbour in added_nodes:
-                net.add_edge(node, neighbour, width=distance, length=distance)
+                net.add_edge(node, neighbour, width=distance / 10)
 
     net.force_atlas_2based()
 
