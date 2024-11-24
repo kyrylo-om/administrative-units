@@ -1,4 +1,4 @@
-## Clustering and Graph Analysis Toolkit
+# Clustering and Graph Analysis Toolkit
 
 This project provides tools for clustering graph-based data, generating datasets, and visualizing results. Below is a detailed breakdown of the modules, supported algorithms, data representations, and visualization capabilities.
 
@@ -72,6 +72,7 @@ This format simplifies cluster analysis and visualization.
 
 The function `visualize()` works both for visualizing simple weighted graphs and also 
 for visualizing weighted graphs divided by clusters. It takes an optional parameter `clusters`
-and paints every node accordingly to its cluster. If nothing is provided, paints every node to blue.
+and paints every node accordingly to its cluster. The center nodes of the cluster appear visually bigger.
+If nothing is provided, paints every node to blue.
 
-![Graph visualization](https://i.imgur.com/iVqu0pJ.jpeg)
+![Graph visualization](https://i.imgur.com/LQGiGsn.jpeg)
