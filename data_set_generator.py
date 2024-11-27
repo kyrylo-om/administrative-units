@@ -1,7 +1,14 @@
-'''Module to generate data sets'''
+"""Module to generate data sets"""
+
 import random
 
-def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edges_prob: float = 0.2) -> dict[str, dict[str, float]]:
+
+def generator(
+    amount: int = 5,
+    minimum: float = 0.1,
+    maximum: float = 10.0,
+    extra_edges_prob: float = 0.2,
+) -> dict[str, dict[str, float]]:
     """
     Generate a connected, undirected weighted graph with optional extra edges.
 
@@ -59,5 +66,6 @@ def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edge
                 graph[node_b][node_a] = weight
 
     return graph
+
 
 print(generator())
