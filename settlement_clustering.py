@@ -66,6 +66,9 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
             if distance < 0:
                 return False
 
+    if graph and not all(graph.values()):
+        return False
+
 def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> list[dict[str, dict[str, float]]]:
     """
     An algorithm for clustering without a predetermined number of clusters - DBSCAN.
