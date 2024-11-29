@@ -69,6 +69,17 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
     if graph and not all(graph.values()):
         return False
 
+    visited = set()
+
+    def in_down(node):
+        if node in visited:
+            #Якщо вузол node вже є у множині visited,
+            #нічого не робимо (бо обхід цього вузла завершено раніше).
+            return
+        visited.add(node) #додаємо вузол node до множини відвіданих вузлів
+        for neighbour in graph.get(node, {}):
+            in_down(neighbour)
+
 def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> list[dict[str, dict[str, float]]]:
     """
     An algorithm for clustering without a predetermined number of clusters - DBSCAN.
