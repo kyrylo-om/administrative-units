@@ -25,6 +25,43 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
     """
     pass
 
+def validator(graph: dict[str, dict[str, float]]) -> bool:
+    '''
+    Reads the graph, and check if it the length of the graph is non-negative,
+    completely not isolated, and connected
+
+    The graph has the following structure:
+    {
+        settlement_name: {neighbour_settlement: distance}
+    }
+
+    Example:
+    {
+        Lviv: {Bruhovychi: 50, Novoyavorivsk: 100},
+        Bruhovychi: {Lviv: 50},
+        Novoyavorivsk: {Lviv: 100}
+    }
+
+    :param graph: dict, the graph gotten by read_file function.
+    :return: bool, if allright -> True, else -> False.
+    >>> validator({\
+        "Lviv": {"Bruhovychi": 50, "Novoyavorivsk": 100},\
+        "Bruhovychi": {"Lviv": 50},\
+        "Novoyavorivsk": {"Lviv": 100}\
+    })
+    True
+    >>> validator({\
+        "Lviv": {"Bruhovychi": -50, "Novoyavorivsk": 100},\
+        "Bruhovychi": {"Lviv": 50},\
+        "Novoyavorivsk": {"Lviv": 100}\
+    })
+    False
+    >>> validator({'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
+        'Novoyavorivsk': {'Lviv': 100}\
+    })
+    False
+    '''
+    pass
 
 def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> list[dict[str, dict[str, float]]]:
     """
@@ -70,3 +107,7 @@ def visualize(clusters: list):
     :return: None
     """
     pass
+
+if __name__ == '__main__':
+    import doctest
+    print(doctest.testmod())
