@@ -157,7 +157,18 @@ def kmedoids_clustering(graph: dict[str, dict[str, float]],\
     nodes, distance_matrix = compute_distance_matrix(graph)
     n = len(nodes)
 
-    medoids = random.sample(range(n), num_of_clusters)
+    # medoids = random.sample(range(n), num_of_clusters)
+
+    medoids = [random.sample(range(n), 1)[0]]
+    for _ in range(num_of_clusters-1):
+        distance_to_nearest_medoid = [
+            min(distance_matrix[node][medoid] for medoid in medoids)**2
+            for node in range(n)
+        ]
+        probabilities = [d / sum(distance_to_nearest_medoid)
+                        for d in distance_to_nearest_medoid]
+        next_medoid = np.random.choice(range(n), p=probabilities)
+        medoids.append(next_medoid)
 
     for _ in range(max_iter):
 
