@@ -61,7 +61,10 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
     })
     False
     '''
-    pass
+    for key, values in graph.items():
+        for distance in values.values():
+            if distance < 0:
+                return False
 
 def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> list[dict[str, dict[str, float]]]:
     """
