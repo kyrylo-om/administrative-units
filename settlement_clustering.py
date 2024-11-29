@@ -78,6 +78,12 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
         for neighbour in graph.get(node, {}):
             in_down(neighbour)
 
+    if graph:
+        start_node = list(graph.keys())[0]
+        in_down(start_node)
+        if len(visited) != len(graph):
+            return False
+
 
 def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> list[dict[str, dict[str, float]]]:
     """
