@@ -1,9 +1,9 @@
 '''Module to generate data sets'''
 import random
+from faker import Faker
 
-
-def generator(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0,
-              extra_edges_prob: float = 0.2, node_labels: bool = False) -> dict[str, dict[str, float]]:
+def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0,
+        extra_edges_prob: float = 0.0001, node_labels: bool = False) -> dict[str, dict[str, float]]:
     """
     Generate a connected, undirected weighted graph with optional extra edges.
 
@@ -30,11 +30,15 @@ def generator(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0,
         raise ValueError("Minimum value must be less than the maximum value.")
     if not 0 <= extra_edges_prob <= 1:
         raise ValueError("Connectivity must be a value between 0 and 1.")
+    if amount > 1800 and node_labels is True:
+        raise ValueError("There are not enough unique cities' names.")
 
     #Initialize graph
     if node_labels:
-        graph = {''.join([chr(random.randrange(97, 122))
-                 for _ in range(random.randrange(3, 10))]).capitalize(): {}
+        #make Faker class variable
+        fake = Faker('uk_UA')
+
+        graph = {fake.unique.city(): {}
                  for _ in range(amount)}
     else:
         graph = {f"{i}": {} for i in range(amount)}
