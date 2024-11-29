@@ -84,6 +84,7 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
         if len(visited) != len(graph):
             return False
 
+    return True
 
 def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> list[dict[str, dict[str, float]]]:
     """
