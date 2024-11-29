@@ -1,0 +1,5 @@
+graph example {
+   A -- B [distance=5.0];
+   B -- C [distance=7.2];
+   A -- C [distance=8.0];
+}

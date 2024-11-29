@@ -23,13 +23,41 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
     Example:
     >>> example_file = "example.dot"
     >>> with open(example_file, "w") as f:
-    ...     f.write("graph example {\\n")
-    ...     f.write("    A -- B [distance=5.0];\\n")
-    ...     f.write("    B -- C [distance=7.2];\\n")
-    ...     f.write("    A -- C [distance=8.0];\\n")
-    ...     f.write("}\\n")
+    ...     _ = f.write("graph example {\\n")
+    ...     _ = f.write("   A -- B [distance=5.0];\\n")
+    ...     _ = f.write("   B -- C [distance=7.2];\\n")
+    ...     _ = f.write("   A -- C [distance=8.0];\\n")
+    ...     _ = f.write("}\\n")
     >>> read_file(example_file)
     {'A': {'B': 5.0, 'C': 8.0}, 'B': {'A': 5.0, 'C': 7.2}, 'C': {'B': 7.2, 'A': 8.0}}
+
+    >>> example_file = "invalid_format.dot"
+    >>> with open(example_file, "w") as f:
+    ...     _ = f.write("{\\n")
+    ...     _ = f.write("   A -- B [distance=5.0];\\n")
+    ...     _ = f.write("}\\n")
+    >>> try:
+    ...     read_file(example_file)
+    ... except ValueError as e:
+    ...     print(e)
+    Файл повинен починатися з 'graph <name> {'.
+
+    >>> example_file = "invalid_distance.dot"
+    >>> with open(example_file, "w") as f:
+    ...     _ = f.write("graph example {\\n")
+    ...     _ = f.write("   A -- B []\\n")
+    ...     _ = f.write("}\\n")
+    >>> try:
+    ...     read_file(example_file)
+    ... except ValueError as e:
+    ...     print(e)
+    Некоректний формат рядка: 'A -- B []'
+
+    >>> try:
+    ...     read_file("nonexistent.dot")
+    ... except FileNotFoundError as e:
+    ...     print(e)
+    Файл 'nonexistent.dot' не знайдено.
     """
     # Check file extension
     if not file_name.endswith(".dot"):
@@ -71,8 +99,8 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
             node2, distance_part = right_part.split("[distance=")
             node2 = node2.strip()
             distance = float(distance_part.rstrip("];").strip())
-        except Exception as e:
-            raise ValueError(f"Помилка в рядку '{line}': {e}")
+        except (ValueError, TypeError, IndexError) as e:
+            print(f"Помилка в рядку '{line}': {e}")
 
         # Add edges to the graph
         if node1 not in graph:
@@ -85,6 +113,9 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
         graph[node2][node1] = distance
 
     return graph
+
+
+# print(read_file('ukraine.dot'))
 
 
 def dbscan(
@@ -135,3 +166,9 @@ def visualize(clusters: list):
     :return: None
     """
     pass
+
+
+if __name__ == "__main__":
+    import doctest
+
+    print(doctest.testmod())
