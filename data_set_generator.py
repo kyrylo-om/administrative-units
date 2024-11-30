@@ -1,7 +1,9 @@
 '''Module to generate data sets'''
 import random
+from faker import Faker
 
-def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edges_prob: float = 0.2) -> dict[str, dict[str, float]]:
+def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0,
+        extra_edges_prob: float = 0.0001, node_labels: bool = False) -> dict[str, dict[str, float]]:
     """
     Generate a connected, undirected weighted graph with optional extra edges.
 
@@ -9,7 +11,10 @@ def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edge
         amount (int): The number of nodes the graph will have.
         minimum (float): The minimum value (distance) an edge can have.
         maximum (float): The maximum value (distance) an edge can have.
-        extra_edges_prob (float): Probability of adding an additional edge beyond the minimum spanning tree.
+        extra_edges_prob (float): Probability of adding an additional edge
+        beyond the minimum spanning tree.
+        node_labels (bool): Determines whether nodes should have generated labels.
+        If False, nodes will be represented as numbers, if True - as randomly generated strings.
 
     Returns:
         dict: A dictionary where keys are node names (strings) and values are dictionaries
@@ -23,14 +28,24 @@ def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edge
         raise ValueError("Minimum value must be greater than 0")
     if minimum >= maximum:
         raise ValueError("Minimum value must be less than the maximum value.")
-    if not (0 <= extra_edges_prob <= 1):
+    if not 0 <= extra_edges_prob <= 1:
         raise ValueError("Connectivity must be a value between 0 and 1.")
+    if amount > 1800 and node_labels is True:
+        raise ValueError("There are not enough unique cities' names.")
 
-    # Initialize graph
-    graph = {f"{i}": {} for i in range(amount)}
+    #Initialize graph
+    if node_labels:
+        #make Faker class variable
+        fake = Faker('uk_UA')
+
+        graph = {fake.unique.city(): {}
+                 for _ in range(amount)}
+    else:
+        graph = {f"{i}": {} for i in range(amount)}
+
     nodes = list(graph.keys())
 
-    # Step 1: Ensure graph is connected using a minimum spanning tree approach
+    #Ensure graph is connected using a minimum spanning tree approach
     available_nodes = set(nodes)
     connected_nodes = {nodes.pop(0)}  # Start with the first node
 
@@ -40,7 +55,8 @@ def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edge
 
         # Create a random weight for the edge
         weight = round(random.uniform(minimum, maximum), 2)
-
+        if from_node == to_node:
+            continue
         # Add the edge
         graph[from_node][to_node] = weight
         graph[to_node][from_node] = weight
@@ -49,15 +65,14 @@ def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edge
         connected_nodes.add(to_node)
         available_nodes.remove(to_node)
 
-    # Step 2: Add random extra edges based on probability
-    for i in range(amount):
-        for j in range(i + 1, amount):
-            node_a, node_b = f"{i}", f"{j}"
-            if random.random() <= extra_edges_prob and node_b not in graph[node_a]:
+    #Add random extra edges based on probability
+    for node_a in graph:
+        for node_b in graph:
+            if node_a == node_b or node_b in graph[node_a]:
+                continue
+            if random.random() <= extra_edges_prob:
                 weight = round(random.uniform(minimum, maximum), 2)
                 graph[node_a][node_b] = weight
                 graph[node_b][node_a] = weight
 
     return graph
-
-print(generator())
