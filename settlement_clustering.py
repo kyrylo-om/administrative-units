@@ -2,6 +2,8 @@
 A module for clustering settlements into administrative units.
 """
 import time
+import os
+import platform
 def read_file(file_name: str) -> dict[str, dict[str, float]]:
     """
     Reads the graph from file.
@@ -59,45 +61,87 @@ def command_line_interface():
     :return: None
     """
     default_time_delay = 0.035
-    def smooth_text(text:str,delay):
+    def smooth_text(text:str,delay, ending == False): #function for smoothly appearing text
         """
         function that smooth_texts text in terminal not instantly but with small time sleep
         so that this text smooth_texting process can be beautiful
         """
         for i, char in enumerate(text):
             if i == len(text)-1:
-                print(char,flush=True)
-                time.sleep(delay)
+                if ending == True:
+                    print(char,flush=True, end = "")
+                    time.sleep(delay)
             else:
                 print(char,end="",flush=True)
                 time.sleep(delay)
+
+    #introduction of the program to user
     smooth_text("Hello, my dear friend!!\nThis program can help if you want to do some clustering with your data",default_time_delay)
     smooth_text("Here is some main requirements:\nFile(with data to cluster) format should be .dot",default_time_delay)
     smooth_text("Also we need your data to be like this:\ngraph\nA — B [distance]",default_time_delay)
     smooth_text("B — C [distance]",default_time_delay)
     smooth_text("A — C [distance]",default_time_delay)
-    smooth_text("Where 'A','B','C' - names of the nodes\ndistance - distance between those nodes",default_time_delay)
+    smooth_text("Where 'A','B','C' - names of the nodes\ndistance - distance between those nodes\nIn addition, whenever you want to quit - just type \"quit\"",default_time_delay)
     smooth_text("write path to file here",default_time_delay)
-    path_name = input("path to file:",)
-    file_format = path_name[-3:]
-    if file_format != "dot":
-        if_wrong_format_text = ("Sorry but format of file doesn't match the requirements, please pay attention to format of it and try again",)
-        return smooth_text(if_wrong_format_text,default_time_delay)
-    else:
-        check_file = check_file_content(path_name)
-        if check_file != "Wrong file (return of that function)":
-            smooth_text("Also please type number of clusters that you want to recieve. Number can be from 1 to 100. If it doesn't matter for you type \"0\"",default_time_delay)
-            number_of_clusters = input("Please type the number of clusters and 0 if it doesn't matter:")
-            if number_of_clusters == 0:
-                result_of_clustering = dbscan(read_file(path_name))
-                
-            elif number_of_clusters > 1 and number_of_clusters < 100:
-                result_of_clustering = kmedoids_clustering(read_file(path_name), number_of_clusters)
-        else:
-            if_wrong_file_text = "Sorry but your file does not match requirements for clustering, you may choose another file and try again"
-            return smooth_text(if_wrong_file_text,default_time_delay)
+    path_name = input("path to file:")
+    graph = read_file(path_name)        
+    check_file_content = validator(graph)
+    while check_file_content == False:
+        smooth_text("Sorry but your graph doesn't match the requirements. It has distances < 0 or is some node may be isolated so clustering makes no sense or there already is cluster",ending=True)
+        smooth_text("Please try again")
+        path_name = input("path to file:")
+        graph = read_file(path_name)        
+        check_file_content = validator(graph)
 
-
+    smooth_text("Also please type number of clusters that you want to recieve. Number can be from 1 to 100. If it doesn't matter for you type \"0\"",default_time_delay)
+    number_of_clusters = input("Please type the number of clusters and 0 if it doesn't matter:")
+    #choosing algorithm depending on number of clusters
+    # if number_of_clusters == 0:
+    #     result_of_clustering = dbscan(graph)
+        
+    if number_of_clusters > 1 and number_of_clusters < 100:
+        result_of_clustering = []
+        result_of_clustering = kmedoids_clustering((graph), number_of_clusters)
+    while number_of_clusters != 0 and number_of_clusters < 1 and number_of_clusters > 100: 
+        smooth_text("sorry but it seems you put invalid number of clusters, please try again")
+        number_of_clusters = input("Please type the number of clusters and 0 if it doesn't matter:")
+    # visualisation of result
+    smooth_text("Clustering is done! type \"term\" if you want to see the results in terminal and \"browser\"", default_time_delay,ending=True)
+    smooth_text("if you want to see the results using browser")
+    vis_choice = input(smooth_text("way of visualisation:"))
+    if vis_choice == "term":
+        print("=" * 40)
+        print("Clustering Results:")
+        print("=" * 40)
+        num = 1
+        for cluster in result_of_clustering:
+            centre = cluster["centre"]
+            nodes = cluster["nodes"]
+            smooth_text(f"Cluster {num}", default_time_delay)
+            smooth_text(f"Central Node: {centre}", default_time_delay)
+            for node in nodes:
+                smooth_text(f"  -> {node}",default_time_delay)
+            num += 1
+        print("=" * 40)
+        return smooth_text("Thank you for using our program! Have a great day!",default_time_delay)
+    elif vis_choice == "browser":
+        visualize(graph,result_of_clustering)
+        # Визначаємо операційну систему та відкриваємо файл відповідною командою
+        system_name = platform.system()
+        if system_name == "Darwin":  # macOS
+            os.system(f"open {current_path}")
+        elif system_name == "Windows":  # Windows
+            os.system(f"start {current_path}")
+        else:  # Для Linux та інших систем
+            os.system(f"xdg-open {current_path}")
+        current_path = os.getcwd()
+        os.system(f"{current_path}\graph.html")
+        return smooth_text("Thank you for using our program! Have a great day!",default_time_delay)
+    while vis_choice != "browser" and vis_choice != "term":
+        vis_choice(smooth_text("command not found, please choose the way to see the results:"))
+    
+    
+print(command_line_interface())
 def visualize(clusters: list):
     """
     Visualizes a weighted graph using the pyvis library.
