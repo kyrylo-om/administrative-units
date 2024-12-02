@@ -1,7 +1,7 @@
 """
 A module for clustering settlements into administrative units.
 """
-
+import numpy as np
 
 def read_file(file_name: str) -> dict[str, dict[str, float]]:
     """
