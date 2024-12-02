@@ -4,8 +4,6 @@ A module for clustering settlements into administrative units.
 
 from pyvis.network import Network
 import random
-
-import random
 import numpy as np
 
 
@@ -170,7 +168,7 @@ def kmedoids_clustering(graph: dict[str, dict[str, float]],\
         ]
         probabilities = [d / sum(distance_to_nearest_medoid)
                         for d in distance_to_nearest_medoid]
-        next_medoid = np.random.choice(range(n), p=probabilities)
+        next_medoid = np.argmax(probabilities)
         medoids.append(next_medoid)
 
     for _ in range(max_iter):
