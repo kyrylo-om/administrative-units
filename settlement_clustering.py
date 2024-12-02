@@ -158,7 +158,7 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
         "Bruhovychi": {"Lviv": 50},\
         "Novoyavorivsk": {"Lviv": 100}\
     })
-    False
+    'some of values have negative lenth'
     >>> validator({\
         'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
         'Novoyavorivsk': {'Lviv': 100}\
@@ -187,12 +187,12 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
     '''
     if not isinstance(graph, dict) or\
     any(not isinstance(neighbors, dict) for neighbors in graph.values()):
-        return False
+        return 'graph is not dict type or values in graph is not dict type'
 
     for key, values in graph.items():
         for distance in values.values():
             if distance <= 0:
-                return False
+                return 'some of values have negative lenth or == 0'
 
     all_nodes = set(graph.keys())
     for neighbors in graph.values():
@@ -200,7 +200,7 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
 
     for node in all_nodes:
         if node not in graph or not graph.get(node, {}):
-            return False
+            return 'graph is isolated'
 
     expanded_graph = {}
     for node in all_nodes:
@@ -210,11 +210,12 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
     for i in range(len(nodes)):
         for j in range(len(nodes)):
             if i != j and distance_matrix[i][j] == float('inf'):
-                return False
+                return 'The graph is not connected - some nodes cannot be reached'
+
     for node, connections in graph.items():
         for neighbor, distance in connections.items():
             if not graph or not distance or graph[neighbor].get(node) != distance:
-                return False
+                return 'The graph must be symmetric'
     return True
 
 def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> list[dict[str, dict[str, float]]]:
