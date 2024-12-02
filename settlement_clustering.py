@@ -45,7 +45,7 @@ def dijkstra(graph:dict[str, dict[str, float]], start_node:str) ->dict[str,float
         ...     '4': {'0': 4.94, '2': 4.72, '1': 9.68},
         ... }
         >>> expected = {'0': 0, '1': 14.62, '2': 9.66, '3': 4.83, '4': 4.94}
-        >>> dijkstra_no_heapq(graph_dict, '0') == expected
+        >>> dijkstra(graph_dict, '0') == expected
         True
     """
     distances = {node: float('inf') for node in graph}
@@ -159,34 +159,62 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
         "Novoyavorivsk": {"Lviv": 100}\
     })
     False
-    >>> validator({'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
+    >>> validator({\
+        'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
         'Novoyavorivsk': {'Lviv': 100}\
     })
     False
+    >>> validator({\
+        'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
+        'Novoyavorivsk': {'Lviv': 90},\
+        'Bruhovychi': {'Lviv': 50}\
+    })
+    False
+    >>> validator({\
+        'Lviv': {},\
+        'Novoyavorivsk': {'Lviv': 90},\
+        'Bruhovychi': {'Lviv': 50}\
+    })
+    False
+    >>> validator({\
+        'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
+        "Bruhovychi": {"Lviv": 50, "Hutir": 100},\
+        "Novoyavorivsk": {"Lviv": 100},\
+        "Hutir": {"Bruhovychi": 100, "Donetsk": 1000},\
+        "Donetsk": {}\
+    })
+    False
     '''
+    if not isinstance(graph, dict) or\
+    any(not isinstance(neighbors, dict) for neighbors in graph.values()):
+        return False
+
     for key, values in graph.items():
         for distance in values.values():
             if distance < 0:
                 return False
 
-    if graph and not all(graph.values()):
-        return False
+    all_nodes = set(graph.keys())
+    for neighbors in graph.values():
+        all_nodes.update(neighbors.keys())
 
-    visited = set()
-
-    def in_down(node):
-        if node in visited:
-            return
-        visited.add(node)
-        for neighbour in graph.get(node, {}):
-            in_down(neighbour)
-
-    if graph:
-        start_node = list(graph.keys())[0]
-        in_down(start_node)
-        if len(visited) != len(graph):
+    for node in all_nodes:
+        if node not in graph or not graph.get(node, {}):
             return False
 
+    expanded_graph = {}
+    for node in all_nodes:
+        expanded_graph[node] = graph.get(node)
+    nodes, distance_matrix = compute_distance_matrix(expanded_graph)
+
+    for i in range(len(nodes)):
+        for j in range(len(nodes)):
+            if i != j and distance_matrix[i][j] == float('inf'):
+                return False
+    for node, connections in graph.items():
+        for neighbor, distance in connections.items():
+            if not graph or not distance or graph[neighbor].get(node) != distance:
+                return False
     return True
 
 def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> list[dict[str, dict[str, float]]]:
