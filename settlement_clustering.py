@@ -191,7 +191,7 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
 
     for key, values in graph.items():
         for distance in values.values():
-            if distance < 0:
+            if distance <= 0:
                 return False
 
     all_nodes = set(graph.keys())
