@@ -158,24 +158,24 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
         "Bruhovychi": {"Lviv": 50},\
         "Novoyavorivsk": {"Lviv": 100}\
     })
-    'some of values have negative lenth'
+    'Some of values have negative lenth or == 0'
     >>> validator({\
         'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
         'Novoyavorivsk': {'Lviv': 100}\
     })
-    False
+    'Graph is isolated'
     >>> validator({\
         'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
         'Novoyavorivsk': {'Lviv': 90},\
         'Bruhovychi': {'Lviv': 50}\
     })
-    False
+    'The graph must be symmetric'
     >>> validator({\
         'Lviv': {},\
         'Novoyavorivsk': {'Lviv': 90},\
         'Bruhovychi': {'Lviv': 50}\
     })
-    False
+    'Graph is isolated'
     >>> validator({\
         'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
         "Bruhovychi": {"Lviv": 50, "Hutir": 100},\
@@ -183,16 +183,16 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
         "Hutir": {"Bruhovychi": 100, "Donetsk": 1000},\
         "Donetsk": {}\
     })
-    False
+    'Graph is isolated'
     '''
     if not isinstance(graph, dict) or\
     any(not isinstance(neighbors, dict) for neighbors in graph.values()):
-        return 'graph is not dict type or values in graph is not dict type'
+        return 'Graph is not dict type or values in graph is not dict type'
 
     for key, values in graph.items():
         for distance in values.values():
             if distance <= 0:
-                return 'some of values have negative lenth or == 0'
+                return 'Some of values have negative lenth or == 0'
 
     all_nodes = set(graph.keys())
     for neighbors in graph.values():
@@ -200,7 +200,7 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
 
     for node in all_nodes:
         if node not in graph or not graph.get(node, {}):
-            return 'graph is isolated'
+            return 'Graph is isolated'
 
     expanded_graph = {}
     for node in all_nodes:
