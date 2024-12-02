@@ -40,7 +40,7 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
     ...     read_file(example_file)
     ... except ValueError as e:
     ...     print(e)
-    Файл повинен починатися з 'graph <name> {'.
+    File must start with 'graph <name> {'.
 
     >>> example_file = "invalid_distance.dot"
     >>> with open(example_file, "w") as f:
@@ -51,32 +51,32 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
     ...     read_file(example_file)
     ... except ValueError as e:
     ...     print(e)
-    Некоректний формат рядка: 'A -- B []'
+    Incorrect line format: 'A -- B []'
 
     >>> try:
     ...     read_file("nonexistent.dot")
     ... except FileNotFoundError as e:
     ...     print(e)
-    Файл 'nonexistent.dot' не знайдено.
+    File 'nonexistent.dot' not found.
     """
     # Check file extension
     if not file_name.endswith(".dot"):
-        raise ValueError("Файл повинен мати розширення .dot.")
+        raise ValueError("File must have a .dot extension.")
 
     # Try to open the file
     try:
         with open(file_name, "r", encoding="utf-8") as file:
             lines = file.readlines()
     except FileNotFoundError as exc:
-        raise FileNotFoundError(f"Файл '{file_name}' не знайдено.") from exc
+        raise FileNotFoundError(f"File '{file_name}' not found.") from exc
     except IOError as exc:
-        raise IOError(f"Помилка під час читання файлу '{file_name}'.") from exc
+        raise IOError(f"Error reading the file '{file_name}'.") from exc
 
     # Check the format of the first and last lines
     if not lines[0].strip().startswith("graph ") or not lines[0].strip().endswith("{"):
-        raise ValueError("Файл повинен починатися з 'graph <name> {'.")
+        raise ValueError("File must start with 'graph <name> {'.")
     if not lines[-1].strip() == "}":
-        raise ValueError("Файл має закінчуватися '}'.")
+        raise ValueError("File must end with '}'.")
 
     graph = {}
 
@@ -89,7 +89,7 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
             or "[distance=" not in line
             or not line.endswith("];")
         ):
-            raise ValueError(f"Некоректний формат рядка: '{line}'")
+            raise ValueError(f"Incorrect line format: '{line}'")
 
         # Parse the line
         try:
@@ -100,7 +100,7 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
             node2 = node2.strip()
             distance = float(distance_part.rstrip("];").strip())
         except (ValueError, TypeError, IndexError) as e:
-            print(f"Помилка в рядку '{line}': {e}")
+            print(f"Error in line '{line}': {e}")
 
         # Add edges to the graph
         if node1 not in graph:
