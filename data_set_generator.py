@@ -47,12 +47,12 @@ def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0
     nodes = list(graph.keys())
 
     # Ensure graph is connected using a minimum spanning tree approach
-    available_nodes = set(nodes)
-    connected_nodes = {nodes.pop(0)}  # Start with the first node
+    available_nodes = nodes
+    connected_nodes = [nodes.pop(0)]  # Start with the first node
 
     while available_nodes:
-        from_node = random.choice(list(connected_nodes))
-        to_node = random.choice(list(available_nodes))
+        from_node = random.choice(connected_nodes)
+        to_node = random.choice(available_nodes)
 
         # Create a random weight for the edge
         weight = round(random.uniform(minimum, maximum), 2)
@@ -63,7 +63,7 @@ def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0
         graph[to_node][from_node] = weight
 
         # Move the node to the connected set
-        connected_nodes.add(to_node)
+        connected_nodes.append(to_node)
         available_nodes.remove(to_node)
 
     # Add random extra edges based on probability
