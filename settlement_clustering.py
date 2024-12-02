@@ -26,17 +26,34 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
     pass
 
 
-def dbscan(graph: dict[str, dict[str, float]], eps: float, min_points: int) -> list[dict[str, dict[str, float]]]:
-    """
-    An algorithm for clustering without a predetermined number of clusters - DBSCAN.
 
-    :param graph: dict, The graph of nodes.
-    :param eps: float, The maximum distance between two points for them to be considered neighbours.
-    (from the same cluster)
-    :param min_points: int, The minimum number of points required to form a cluster.
-    :return: list, The nodes divided to clusters (each cluster is an element of the list).
+def calculate_modularity(graph: dict[str, dict[str, float]],
+                         communities: dict[str, set[str]],
+                         total_weight: float) -> float:
     """
-    pass
+    Calculate the modularity of the given graph and its partition into communities.
+
+    Modularity is a measure of the quality of a graph partition, where higher values indicate
+    better-defined communities.
+
+    Args:
+        graph (Dict[str, Dict[str, float]]): The input graph represented as an adjacency dictionary.
+            Each node maps to a dictionary of its neighbors with edge weights.
+        communities (Dict[str, Set[str]]): A dictionary where each key represents a community
+            and the value is the set of nodes in that community.
+        total_weight (float): The total weight of all edges in the graph.
+
+    Returns:
+        float: The modularity of the partition.
+    """
+    modularity = 0
+    for community in communities.values():
+        in_degree = sum(graph[u][v] for u in community for v in community if v in graph[u])
+        degree = sum(sum(graph[u].values()) for u in community)
+        modularity += in_degree / (2 * total_weight) - (degree / (2 * total_weight)) ** 2
+    return modularity
+
+
 
 
 def kmedoids_clustering(graph: dict[str, dict[str, float]], num_of_clusters: int) -> list[dict[str, dict[str, float]]]:
