@@ -80,7 +80,7 @@ def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0
     return graph
 
 
-def convert_to_dot(graph: dict[str, dict[str, float]]) -> None:
+def convert_to_dot(graph: dict[str, dict[str, float]], filename: str) -> None:
     """
     Generate and save a Graphviz DOT representation of the given graph to a file.
 
@@ -91,13 +91,14 @@ def convert_to_dot(graph: dict[str, dict[str, float]]) -> None:
         graph (dict[str, dict[str, float]]): A dictionary representing the graph, where:
             - Keys are node names (strings).
             - Values are dictionaries mapping neighboring nodes to their edge weights.
+        filename (str): The path to the file to write into.
 
     Side Effects:
         Creates a file named `demo_graph.dot` in the current working directory 
         containing the DOT representation of the graph.
     """
-    with open('demo_graph.dot', 'w', encoding='UTF-8') as output:
-        output.write("graph G {\n")
+    with open(filename, 'w', encoding='UTF-8') as output:
+        output.write("graph " + filename.capitalize()[:-4] + " {\n")
 
         written_edges = set()
 
