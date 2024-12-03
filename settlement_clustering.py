@@ -52,38 +52,28 @@ def kmedoids_clustering(graph: dict[str, dict[str, float]], num_of_clusters: int
     pass
 
 
-def visualisation_in_terminal(clustered_graph):
+def print_clusters(clustered_graph):
     """
     visualisation of clustering in terminal
     """
-    default_time_delay = 0.035
-    def smooth_text(text:str,delay): #function for smoothly appearing text
-        """
-        function that smooth_texts text in terminal not instantly but with small time sleep
-        so that this text smooth_texting process can be beautiful
-        """
-        for i, char in enumerate(text):
-            if i == len(text)-1:
-                # if ending == True
-                    print(char,flush=True)
-                    time.sleep(delay)
-            else:
-                print(char,end="",flush=True)
-                time.sleep(delay)
-    print("=" * 40)
-    print("Clustering Results:")
-    print("=" * 40)
+    result = ""
+    result += "=" * 40
+    result += "\nClustering Results:\n"
+    result += "=" * 40
     num = 1
     for cluster in clustered_graph:
-        centre = cluster['center']
+        if 'center' in cluster:
+            centre = cluster['center']
+            result += f"\n\nCluster {num} (central node: {centre})\n"
+        else:
+            result += f"\n\nCluster {num}:\n"
         nodes = cluster['nodes']
-        smooth_text(f"Cluster {num}", default_time_delay)
-        smooth_text(f"Central Node: {centre}", default_time_delay)
         for node in nodes:
-            smooth_text(f"  -> {node}",default_time_delay)
+            result += f"\n  - {node}"
         num += 1
-        print("=" * 40)
-        return smooth_text("Thank you for using our program! Have a great day!",default_time_delay)
+        result += "\n\n"
+        result += "=" * 40
+        return result
 
 def command_line_interface():
     """
@@ -170,10 +160,10 @@ def command_line_interface():
     if vis_choice == "quit":
         exit()
     elif vis_choice == "term":
-        visualisation_in_terminal(result_of_clustering)
+        smooth_text(print_clusters(result_of_clustering), default_time_delay)
     elif vis_choice == "browser":
         webbrowser.open(f"{os.getcwd()}\\graph.html")
-        return smooth_text("Thank you for using our program! Have a great day!",default_time_delay)
+    return smooth_text("Thank you for using our program! Have a great day!",default_time_delay)
 
 
 
