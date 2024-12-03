@@ -3,7 +3,6 @@ A module for clustering settlements into administrative units.
 """
 
 
-import time
 from collections import defaultdict
 from pyvis.network import Network
 import argparse
@@ -93,10 +92,10 @@ def read_file(file_name: str) -> dict[str, dict[str, float]] | str:
     for line in lines[1:-1]:
         line = line.strip()
         if (
-            not line
-            or "--" not in line
-            or "[distance=" not in line
-            or not line.endswith("];")
+                not line
+                or "--" not in line
+                or "[distance=" not in line
+                or not line.endswith("];")
         ):
             return f"Incorrect line format: '{line}'"
 
@@ -190,8 +189,8 @@ def validator(graph: dict[str, dict[str, float]]) -> bool | str:
     })
     'The graph is not connected - some nodes cannot be reached'
     '''
-    if not isinstance(graph, dict) or\
-    any(not isinstance(neighbors, dict) for neighbors in graph.values()):
+    if not isinstance(graph, dict) or \
+            any(not isinstance(neighbors, dict) for neighbors in graph.values()):
         return 'Graph is not dict type or values in graph is not dict type'
 
     if graph == {}:
@@ -222,12 +221,12 @@ def validator(graph: dict[str, dict[str, float]]) -> bool | str:
     return True
 
 
-def dijkstra(graph:dict[str, dict[str, float]], start_node:str) ->dict[str,float]:
+def dijkstra(graph: dict[str, dict[str, float]], start_node: str) -> dict[str, float]:
     """
     Compute shortest paths from the start_node to all other nodes using Dijkstra's algorithm.
 
     Args:
-        graph_dict (dict): Adjacency dictionary representing the graph.
+        graph (dict): Adjacency dictionary representing the graph.
         start_node (str): The starting node for Dijkstra's algorithm.
 
     Returns:
@@ -242,7 +241,7 @@ def dijkstra(graph:dict[str, dict[str, float]], start_node:str) ->dict[str,float
         ...     '4': {'0': 4.94, '2': 4.72, '1': 9.68},
         ... }
         >>> expected = {'0': 0, '1': 14.62, '2': 9.66, '3': 4.83, '4': 4.94}
-        >>> dijkstra_no_heapq(graph_dict, '0') == expected
+        >>> dijkstra(graph_dict, '0') == expected
         True
     """
     distances = {node: float('inf') for node in graph}
@@ -261,11 +260,12 @@ def dijkstra(graph:dict[str, dict[str, float]], start_node:str) ->dict[str,float
             if neighbor in unvisited:
                 new_distance = distances[current_node] + weight
                 if new_distance < distances[neighbor]:
-                    distances[neighbor] = round(new_distance,2)
+                    distances[neighbor] = round(new_distance, 2)
 
     return distances
 
-def compute_distance_matrix(graph:dict[str, dict[str, float]]) -> list[list]:
+
+def compute_distance_matrix(graph: dict[str, dict[str, float]]) -> list[list]:
     """
     Compute the pairwise distance matrix using Dijkstra's algorithm.
 
@@ -326,8 +326,8 @@ def compute_distance_matrix(graph:dict[str, dict[str, float]]) -> list[list]:
     return nodes, np.round(distance_matrix, 2)
 
 
-def kmedoids_clustering(graph: dict[str, dict[str, float]],\
-                     num_of_clusters: int, max_iter:int=100) -> list[dict[str, dict[str, float]]]:
+def kmedoids_clustering(graph: dict[str, dict[str, float]],
+                        num_of_clusters: int, max_iter: int = 100) -> list[dict[str, dict[str, float]]]:
     """
     An algorithm for clustering with a predetermined number of clusters - k-medoids clustering.
 
@@ -342,31 +342,31 @@ def kmedoids_clustering(graph: dict[str, dict[str, float]],\
     # medoids = random.sample(range(n), num_of_clusters)
 
     medoids = [random.sample(range(n), 1)[0]]
-    for _ in range(num_of_clusters-1):
+    for _ in range(num_of_clusters - 1):
         distance_to_nearest_medoid = [
-            min(distance_matrix[node][medoid] for medoid in medoids)**2
+            min(distance_matrix[node][medoid] for medoid in medoids) ** 2
             for node in range(n)
         ]
         probabilities = [d / sum(distance_to_nearest_medoid)
-                        for d in distance_to_nearest_medoid]
+                         for d in distance_to_nearest_medoid]
         next_medoid = np.argmax(probabilities)
         medoids.append(next_medoid)
 
     for _ in range(max_iter):
 
         clusters = {medoid: [] for medoid in medoids}
-        labels = [0]*n
+        labels = [0] * n
 
         for i in range(n):
-            medoids_distance=[distance_matrix[i][medoid] for medoid in medoids]
+            medoids_distance = [distance_matrix[i][medoid] for medoid in medoids]
             closest_medoid = medoids[np.argmin(medoids_distance)]
             clusters[closest_medoid].append(i)
             labels[i] = closest_medoid
 
         new_medoids = []
         for cluster in clusters.values():
-            total_distance=[
-                sum(distance_matrix[node][other] for other in cluster)  for node in cluster
+            total_distance = [
+                sum(distance_matrix[node][other] for other in cluster) for node in cluster
             ]
             new_medoids.append(cluster[np.argmin(total_distance)])
 
@@ -378,8 +378,8 @@ def kmedoids_clustering(graph: dict[str, dict[str, float]],\
     output_clustering = []
     for medoid in clusters:
         cluster = {}
-        cluster['center']=nodes[medoid]
-        cluster['nodes'] = {nodes[index] for index,j in enumerate(labels) if j == medoid}
+        cluster['center'] = nodes[medoid]
+        cluster['nodes'] = {nodes[index] for index, j in enumerate(labels) if j == medoid}
         output_clustering.append(cluster)
 
     return output_clustering
@@ -399,7 +399,7 @@ def find_optimal_cluster_count(graph: dict[str, dict[str, float]]) -> int:
         distances_sum = 0
         for cluster in clusters:
             cluster_nodes = {key: value for key, value in graph.items() if key in cluster['nodes']}
-            distances_sum += sum(d**2 for d in dijkstra(cluster_nodes, cluster['center']).values())
+            distances_sum += sum(d ** 2 for d in dijkstra(cluster_nodes, cluster['center']).values())
 
         wcss.append(distances_sum)
 
@@ -437,8 +437,8 @@ def louvain_algorithm(graph: dict[str, dict[str, float]],
     """
 
     def calculate_modularity(graph: dict[str, dict[str, float]],
-                         communities: dict[str, set[str]],
-                         total_weight: float) -> float:
+                             communities: dict[str, set[str]],
+                             total_weight: float) -> float:
         """
         Calculate the modularity of the given graph and its partition into communities.
 
@@ -491,7 +491,8 @@ def louvain_algorithm(graph: dict[str, dict[str, float]],
                     continue
                 community_degree = sum(sum(graph[u].values()) for u in communities[neighbor_community])
                 node_degree = sum(graph[node].values())
-                modularity_gain = edge_weight / total_weight - (community_degree * node_degree) / (2 * total_weight ** 2)
+                modularity_gain = edge_weight / total_weight - (community_degree * node_degree) / (
+                            2 * total_weight ** 2)
 
                 if modularity_gain > best_modularity_gain:
                     best_modularity_gain = modularity_gain
@@ -577,7 +578,8 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
 
     added_nodes = []
     for node, edges in graph.items():
-        title = f"Name: {node}" + (f"\nCluster: {node_clusters[node]}" if clusters else "") + f"\nConnections: {graph[node]}"
+        title = f"Name: {node}" + (
+            f"\nCluster: {node_clusters[node]}" if clusters else "") + f"\nConnections: {graph[node]}"
         net.add_node(node, size=40 if node in central_nodes else 20, group=node_clusters[node] if clusters else None,
                      title=title)
         added_nodes.append(node)
@@ -597,7 +599,7 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
 def main():
     parser = argparse.ArgumentParser(
         prog="settlement_clustering.py",
-        description='A module for clustering weighted graphs.',)
+        description='A module for clustering weighted graphs.', )
     parser.add_argument('file', help="path to the file to read your graph from",
                         metavar="PATH_TO_FILE", type=str)
     parser.add_argument('-a', metavar='ALGORITHM', type=int,
