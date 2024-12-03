@@ -725,11 +725,12 @@ def main():
         if not args.f:
             parser.error("the following argument is required: -f/--file")
 
-        if args.n < 0:
-            parser.error("argument -n: number of clusters cannot be less than zero.")
-        elif args.n == 0:
-            parser.error("argument -n: number of clusters cannot be zero. "
-                         "Use without this argument to determine the number of clusters automatically.")
+        if args.n is not None:
+            if args.n < 0:
+                parser.error("argument -n: number of clusters cannot be less than zero.")
+            elif args.n == 0:
+                parser.error("argument -n: number of clusters cannot be zero. "
+                             "Use without this argument to determine the number of clusters automatically.")
 
         if args.a and args.a not in (1, 2):
             parser.error("argument -a: value must be 1 or 2")
@@ -737,15 +738,25 @@ def main():
         if args.a == 2 and args.n is not None:
             parser.error("argument -n must be void if the chosen algorithm is Louvain")
 
-        print("Reading file...\n")
-
+        print("\nReading file...")
         graph = read_file(args.f)
-        print("Validating...\n")
+
+        if isinstance(graph, str):
+            print(f"Reading failed: {graph}")
+            exit()
+
+        print("Reading successful.")
+
+        print("\nValidating...")
+
         validating_result = validator(graph)
         if validating_result is not True:
             print(f"Validating failed: {validating_result}")
+            exit()
 
-        if args.n > len(graph):
+        print("Validating successful.")
+
+        if args.n is not None and args.n > len(graph):
             parser.error("argument -n: number of clusters cannot be greater than node count.")
 
         if args.s:
@@ -753,14 +764,21 @@ def main():
 
         if args.n is None:
             if args.a == 1:
-                print("Finding optimal cluster count...")
+                print("\nFinding optimal cluster count...")
                 optimal_cluster_count = find_optimal_cluster_count(graph)
-                print(f"Optimal cluster count: {optimal_cluster_count}\n")
-                print("Running k-medoids algorithm...")
+                print(f"Optimal cluster count: {optimal_cluster_count}")
+                print(f"\nRunning k-medoids algorithm for {optimal_cluster_count} clusters...")
                 clusters = kmedoids_clustering(graph, optimal_cluster_count)
             else:
-                print("Running Louvain algorithm...\n")
+                print("\nRunning Louvain algorithm...")
                 clusters = louvain_algorithm(graph)
+        else:
+            print(f"\nRunning k-medoids algorithm for {args.n} clusters...")
+            clusters = kmedoids_clustering(graph, args.n)
+
+        print("\n")
+        text_clusters = print_clusters(clusters)
+        print(text_clusters)
 
         print("The result is:\n")
         # print_clusters(clusters)
