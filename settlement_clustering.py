@@ -714,6 +714,8 @@ def main():
     parser.add_argument('-s', help="the random seed to use for clustering, "
                                    "affects the choice of medoids in k-medoids algorithm",
                         default=None, type=int, metavar="SEED")
+    parser.add_argument('-w', help="specify a file name to write the clustering results into",
+                        metavar="FILENAME", type=str, default=None)
     parser.add_argument('-v', '--visualize', help="use to visualize the clustered graph",
                         default=None, action='store_true')
 
@@ -780,8 +782,10 @@ def main():
         text_clusters = print_clusters(clusters)
         print(text_clusters)
 
-        print("The result is:\n")
-        # print_clusters(clusters)
+        if args.w is not None:
+            with open(args.w, 'w', encoding="utf-8") as file:
+                file.write(text_clusters)
+            print(f"\nThe result has been recorded to {args.w}")
 
         if args.visualize:
             print("Visualizing result...")
