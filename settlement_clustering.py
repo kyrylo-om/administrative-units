@@ -21,7 +21,7 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
         dict[str, dict[str, float]]: The graph as an adjacency list.
 
     Example:
-    >>> example_file = "example.dot"
+    >>> example_file = "datasets/example.dot"
     >>> with open(example_file, "w") as f:
     ...     _ = f.write("graph example {\\n")
     ...     _ = f.write("   A -- B [distance=5.0];\\n")
@@ -31,7 +31,7 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
     >>> read_file(example_file)
     {'A': {'B': 5.0, 'C': 8.0}, 'B': {'A': 5.0, 'C': 7.2}, 'C': {'B': 7.2, 'A': 8.0}}
 
-    >>> example_file = "invalid_format.dot"
+    >>> example_file = "datasets/invalid_format.dot"
     >>> with open(example_file, "w") as f:
     ...     _ = f.write("{\\n")
     ...     _ = f.write("   A -- B [distance=5.0];\\n")
@@ -42,7 +42,7 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
     ...     print(e)
     File must start with 'graph <name> {'.
 
-    >>> example_file = "invalid_distance.dot"
+    >>> example_file = "datasets/invalid_distance.dot"
     >>> with open(example_file, "w") as f:
     ...     _ = f.write("graph example {\\n")
     ...     _ = f.write("   A -- B []\\n")
