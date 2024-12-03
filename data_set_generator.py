@@ -144,4 +144,6 @@ if __name__ == "__main__":
     if not (0 <= args.e <= 1):
         parser.error("argument -e: the probability must be in the range of [0, 1]")
 
-    convert_to_dot(make_demo_graph(args.a, args.min, args.max, args.e, args.l, args.s), args.file)
+    convert_to_dot(make_demo_graph(args.a, args.min, args.max, args.e, args.labels, args.s), args.file)
+
+    print(f"The graph was successfully generated and recorded to {args.file}")
