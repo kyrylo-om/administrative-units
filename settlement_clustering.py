@@ -89,11 +89,16 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
     added_nodes = []
     for node, edges in graph.items():
         title = f"Name: {node}" + (f"\nCluster: {node_clusters[node]}" if clusters else "") + f"\nConnections: {graph[node]}"
-        net.add_node(node, size=40 if node in central_nodes else 20, group=node_clusters[node], title=title)
+        net.add_node(node, size=40 if node in central_nodes else 20, group=node_clusters[node] if clusters else None,
+                     title=title)
         added_nodes.append(node)
         for neighbour, distance in edges.items():
             if neighbour in added_nodes:
-                net.add_edge(node, neighbour, width=distance / 10)
+                if clusters:
+                    net.add_edge(node, neighbour, width=distance / 2,
+                                 color="gray" if node_clusters[neighbour] != node_clusters[node] else None)
+                else:
+                    net.add_edge(node, neighbour, width=distance / 2)
 
     net.force_atlas_2based()
 
