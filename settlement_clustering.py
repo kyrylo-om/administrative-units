@@ -108,16 +108,20 @@ def main():
         if not args.f:
             parser.error("the following argument is required: -f/--file")
 
-        if args.a and args.a not in (1, 2):
-            parser.error("argument -a: value must be 1 or 2")
-
         if args.n < 0:
             parser.error("argument -n: number of clusters cannot be less than zero.")
         elif args.n == 0:
             parser.error("argument -n: number of clusters cannot be zero. "
                          "Use without this argument to determine the number of clusters automatically.")
 
+        if args.a and args.a not in (1, 2):
+            parser.error("argument -a: value must be 1 or 2")
+
+        if args.a == 2 and args.n is not None:
+            parser.error("argument -n must be void if the chosen algorithm is Louvain")
+
         print("Reading file...\n")
+
         graph = read_file(args.f)
         print("Validating...\n")
         validating_result = validator(graph)
