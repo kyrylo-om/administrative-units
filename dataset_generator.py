@@ -119,7 +119,7 @@ def convert_to_dot(graph: dict[str, dict[str, float]], filename: str) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog="data_set_generator.py",
+        prog="dataset_generator.py",
         description='A module for generating weighted graphs.')
     parser.add_argument('file', help="the name of file to write the graph into (file extension must be .dot)",
                         metavar="FILENAME", type=str, default="graph.dot")
