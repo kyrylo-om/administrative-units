@@ -122,6 +122,105 @@ def read_file(file_name: str) -> dict[str, dict[str, float]] | str:
     return graph
 
 
+def validator(graph: dict[str, dict[str, float]]) -> bool | str:
+    '''
+    Reads the graph, and check if it the length of the graph is non-negative,
+    completely not isolated, and connected
+
+    The graph has the following structure:
+    {
+        settlement_name: {neighbour_settlement: distance}
+    }
+
+    Example:
+    {
+        Lviv: {Bruhovychi: 50, Novoyavorivsk: 100},
+        Bruhovychi: {Lviv: 50},
+        Novoyavorivsk: {Lviv: 100}
+    }
+
+    :param graph: dict, the graph gotten by read_file function.
+    :return: bool, if allright -> True, else -> False.
+    >>> validator({\
+        "Lviv": {"Bruhovychi": 50, "Novoyavorivsk": 100},\
+        "Bruhovychi": {"Lviv": 50},\
+        "Novoyavorivsk": {"Lviv": 100}\
+    })
+    True
+    >>> validator({\
+        "Lviv": {"Bruhovychi": -50, "Novoyavorivsk": 100},\
+        "Bruhovychi": {"Lviv": 50},\
+        "Novoyavorivsk": {"Lviv": 100}\
+    })
+    'Some of values have negative lenth or == 0'
+    >>> validator({\
+        'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
+        'Novoyavorivsk': {'Lviv': 100}\
+    })
+    'Graph is isolated'
+    >>> validator({\
+        'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
+        'Novoyavorivsk': {'Lviv': 90},\
+        'Bruhovychi': {'Lviv': 50}\
+    })
+    'The graph must be symmetric'
+    >>> validator({\
+        'Lviv': {},\
+        'Novoyavorivsk': {'Lviv': 90},\
+        'Bruhovychi': {'Lviv': 50}\
+    })
+    'Graph is isolated'
+    >>> validator({\
+        'Lviv': {'Bruhovychi': 50, 'Novoyavorivsk': 100},\
+        "Bruhovychi": {"Lviv": 50, "Hutir": 100},\
+        "Novoyavorivsk": {"Lviv": 100},\
+        "Hutir": {"Bruhovychi": 100, "Donetsk": 1000},\
+        "Donetsk": {}\
+    })
+    'Graph is isolated'
+    >>> validator({})
+    'Graph is empty'
+    >>> validator({\
+    "Lviv": {"Bruhovychi": 50, "Novoyavorivsk": 100},\
+    "Bruhovychi": {"Lviv": 50, "Novoyavorivsk": 60},\
+    "Novoyavorivsk": {"Lviv": 100, "Bruhovychi": 60},\
+    "Hutir": {"Donetsk": 1000},\
+    "Donetsk": {"Hutir": 1000}\
+    })
+    'The graph is not connected - some nodes cannot be reached'
+    '''
+    if not isinstance(graph, dict) or\
+    any(not isinstance(neighbors, dict) for neighbors in graph.values()):
+        return 'Graph is not dict type or values in graph is not dict type'
+
+    if graph == {}:
+        return 'Graph is empty'
+
+    for key, values in graph.items():
+        for distance in values.values():
+            if distance <= 0:
+                return 'Some of values have negative lenth or == 0'
+
+    all_nodes = set(graph.keys())
+    for neighbors in graph.values():
+        all_nodes.update(neighbors.keys())
+
+    for node in all_nodes:
+        if node not in graph or not graph.get(node, {}):
+            return 'Graph is isolated'
+
+    for node, connections in graph.items():
+        for neighbor, distance in connections.items():
+            if not graph or not distance or graph[neighbor].get(node) != distance:
+                return 'The graph must be symmetric'
+
+    distances = dijkstra(graph, node)
+    if any(dist == float('inf') for dist in distances.values()):
+        return 'The graph is not connected - some nodes cannot be reached'
+
+    return True
+
+
 def dijkstra(graph:dict[str, dict[str, float]], start_node:str) ->dict[str,float]:
     """
     Compute shortest paths from the start_node to all other nodes using Dijkstra's algorithm.
