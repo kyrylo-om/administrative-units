@@ -138,7 +138,7 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
     if not isinstance(graph, dict) or\
     any(not isinstance(neighbors, dict) for neighbors in graph.values()):
         return 'Graph is not dict type or values in graph is not dict type'
-    
+
     if graph == {}:
         return 'Graph is empty'
 
@@ -154,10 +154,6 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
     for node in all_nodes:
         if node not in graph or not graph.get(node, {}):
             return 'Graph is isolated'
-
-    expanded_graph = {}
-    for node in all_nodes:
-        expanded_graph[node] = graph.get(node)
 
     for node, connections in graph.items():
         for neighbor, distance in connections.items():
