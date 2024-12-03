@@ -3,7 +3,7 @@ A module for clustering settlements into administrative units.
 """
 
 
-def read_file(file_name: str) -> dict[str, dict[str, float]]:
+def read_file(file_name: str) -> dict[str, dict[str, float]] | str:
     """
     Reads the graph from file.
 
