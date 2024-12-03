@@ -4,7 +4,9 @@ A module for clustering settlements into administrative units.
 
 
 import argparse
+import os
 import random
+import webbrowser
 
 
 def read_file(file_name: str) -> dict[str, dict[str, float]]:
@@ -145,6 +147,7 @@ def main():
         if args.visualize:
             print("Visualizing result...")
             visualize(graph, clusters)
+            webbrowser.open(f"{os.getcwd()}\\graph.html")
 
 
 if __name__ == "__main__":
