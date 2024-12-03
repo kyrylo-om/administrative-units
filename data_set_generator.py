@@ -1,3 +1,7 @@
+"""
+Module to generate data sets
+"""
+
 import random
 from faker import Faker
 import argparse
