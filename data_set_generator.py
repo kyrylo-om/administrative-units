@@ -133,7 +133,7 @@ if __name__ == "__main__":
                         metavar="PROBABILITY", type=float, default=0)
     parser.add_argument('-s', help="the random seed to use for generating",
                         metavar="SEED", type=int, default=None)
-    parser.add_argument('-l', help="use to assign random text labels to nodes", action='store_true')
+    parser.add_argument('-l', '--labels', help="use to assign random text labels to nodes", action='store_true')
 
     args = parser.parse_args()
 
