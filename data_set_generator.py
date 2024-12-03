@@ -1,6 +1,7 @@
 import random
 from faker import Faker
 
+
 def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0,
                     extra_edges_prob: float = 0.0001, node_labels: bool = False, seed: int = None) -> dict[str, dict[str, float]]:
     """
@@ -78,7 +79,8 @@ def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0
 
     return graph
 
-def write_file_demo_graph_dot(graph: dict[str, dict[str, float]]) -> None:
+
+def convert_to_dot(graph: dict[str, dict[str, float]]) -> None:
     """
     Generate and save a Graphviz DOT representation of the given graph to a file.
 
