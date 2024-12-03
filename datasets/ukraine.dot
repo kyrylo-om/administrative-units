@@ -1,0 +1,16 @@
+graph ukraine {
+    Kyiv -- Kharkiv [distance=477];
+    Kyiv -- Lviv [distance=540];
+    Kyiv -- Odesa [distance=475];
+    Kharkiv -- Dnipro [distance=213];
+    Kharkiv -- Zaporizhzhia [distance=284];
+    Lviv -- IvanoFrankivsk [distance=136];
+    Lviv -- Uzhhorod [distance=270];
+    Odesa -- Mykolaiv [distance=132];
+    Odesa -- Kherson [distance=177];
+    Dnipro -- Zaporizhzhia [distance=85];
+    Dnipro -- KryvyiRih [distance=151];
+    Kherson -- Mykolaiv [distance=58];
+    Uzhhorod -- IvanoFrankivsk [distance=220];
+    Zaporizhzhia -- KryvyiRih [distance=170];
+}
