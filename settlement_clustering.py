@@ -184,10 +184,15 @@ def validator(graph: dict[str, dict[str, float]]) -> bool:
         "Donetsk": {}\
     })
     'Graph is isolated'
+    >>> validator({})
+    'Graph is empty'
     '''
     if not isinstance(graph, dict) or\
     any(not isinstance(neighbors, dict) for neighbors in graph.values()):
         return 'Graph is not dict type or values in graph is not dict type'
+    
+    if graph == {}:
+        return 'Graph is empty'
 
     for key, values in graph.items():
         for distance in values.values():
