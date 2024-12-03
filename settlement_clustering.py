@@ -51,6 +51,39 @@ def kmedoids_clustering(graph: dict[str, dict[str, float]], num_of_clusters: int
     pass
 
 
+def visualisation_in_terminal(clustered_graph):
+    """
+    visualisation of clustering in terminal
+    """
+    default_time_delay = 0.035
+    def smooth_text(text:str,delay): #function for smoothly appearing text
+        """
+        function that smooth_texts text in terminal not instantly but with small time sleep
+        so that this text smooth_texting process can be beautiful
+        """
+        for i, char in enumerate(text):
+            if i == len(text)-1:
+                # if ending == True
+                    print(char,flush=True)
+                    time.sleep(delay)
+            else:
+                print(char,end="",flush=True)
+                time.sleep(delay)
+    print("=" * 40)
+    print("Clustering Results:")
+    print("=" * 40)
+    num = 1
+    for cluster in clustered_graph:
+        centre = cluster['center']
+        nodes = cluster['nodes']
+        smooth_text(f"Cluster {num}", default_time_delay)
+        smooth_text(f"Central Node: {centre}", default_time_delay)
+        for node in nodes:
+            smooth_text(f"  -> {node}",default_time_delay)
+        num += 1
+        print("=" * 40)
+        return smooth_text("Thank you for using our program! Have a great day!",default_time_delay)
+
 def command_line_interface():
     """
     The function for handling interaction with the user. For example: how many clusters
@@ -74,7 +107,7 @@ def command_line_interface():
             else:
                 print(char,end="",flush=True)
                 time.sleep(delay)
-
+    
     #introduction of the program to user
     smooth_text("Hello, my dear friend!!\nThis program can help if you want to do some clustering with your data",default_time_delay)
     smooth_text("Here is some main requirements:\nFile(with data to cluster) format should be .dot",default_time_delay)
@@ -87,7 +120,7 @@ def command_line_interface():
     graph = read_file(path_name)        
     check_file_content = validator(graph)
     while isinstance(check_file_content(), str):
-        smooth_text("Sorry but your graph doesn't match the requirements. It has distances < 0 or is some node may be isolated so clustering makes no sense or there already is cluster",default_time_delay, ending=True)
+        smooth_text("Sorry but your graph doesn't match the requirements. It has distances < 0 or is some node may be isolated so clustering makes no sense or there already is cluster",default_time_delay)
         smooth_text("Please try again",default_time_delay)
         path_name = input("path to file:")
         if path_name == "quit":
@@ -116,28 +149,15 @@ def command_line_interface():
         if number_of_clusters == "quit":
             exit()
     # visualisation of result
-    smooth_text("Clustering is done! type \"term\" if you want to see the results in terminal and \"browser\"", default_time_delay,ending=True)
+    smooth_text("Clustering is done! type \"term\" if you want to see the results in terminal and \"browser\"", default_time_delay)
     smooth_text("if you want to see the results using browser",default_time_delay)
     vis_choice = input(smooth_text("way of visualisation:",default_time_delay))
     if vis_choice == "quit":
         exit()
     if vis_choice == "term":
-        print("=" * 40)
-        print("Clustering Results:")
-        print("=" * 40)
-        num = 1
-        for cluster in result_of_clustering:
-            centre = cluster["centre"]
-            nodes = cluster["nodes"]
-            smooth_text(f"Cluster {num}", default_time_delay)
-            smooth_text(f"Central Node: {centre}", default_time_delay)
-            for node in nodes:
-                smooth_text(f"  -> {node}",default_time_delay)
-            num += 1
-        print("=" * 40)
-        return smooth_text("Thank you for using our program! Have a great day!",default_time_delay)
+        visualisation_in_terminal(result_of_clustering)
     elif vis_choice == "browser":
-        visualize(graph,result_of_clustering)
+        visualise(graph,result_of_clustering)
         # Визначаємо операційну систему та відкриваємо файл відповідною командою
         system_name = platform.system()
         if system_name == "Darwin":  # macOS
@@ -153,9 +173,12 @@ def command_line_interface():
         vis_choice(smooth_text("command not found, please choose the way to see the results:",default_time_delay))
         if vis_choice == "quit":
             exit()
-    
-    
+
+
+
 print(command_line_interface())
+
+
 def visualize(clusters: list):
     """
     Visualizes a weighted graph using the pyvis library.
