@@ -674,7 +674,7 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
                 if "center" in cluster and cluster["center"] == node:
                     central_nodes.add(node)
 
-    net = Network(notebook=True)
+    net = Network(notebook=True, cdn_resources="remote")
 
     added_nodes = []
     for node, edges in graph.items():
