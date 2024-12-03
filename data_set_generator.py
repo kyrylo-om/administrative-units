@@ -59,5 +59,3 @@ def generator(amount: int=5, minimum: float=0.1, maximum: float=10.0, extra_edge
                 graph[node_b][node_a] = weight
 
     return graph
-
-print(generator())

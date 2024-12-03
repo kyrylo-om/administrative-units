@@ -60,7 +60,6 @@ def louvain_algorithm(graph: dict[str, dict[str, float]],
 
     The Louvain algorithm optimizes modularity in two phases:
     1. Phase 1: Nodes are iteratively moved between communities to maximize modularity.
-    2. Phase 2: Communities are aggregated into "supernodes," and the process repeats.
 
     Args:
         graph (Dict[str, Dict[str, float]]): The input graph represented as an adjacency dictionary.
@@ -122,15 +121,15 @@ def louvain_algorithm(graph: dict[str, dict[str, float]],
         if not improvement or abs(new_modularity - initial_modularity) < modularity_gain_threshold:
             break
 
-    # Phase 2: Aggregate the graph
-    new_graph = defaultdict(lambda: defaultdict(float))
-    for community, nodes in communities.items():
-        for u in nodes:
-            for v, weight in graph[u].items():
-                if node_to_community[v] == community:
-                    new_graph[community][community] += weight / 2
-                else:
-                    new_graph[community][node_to_community[v]] += weight
+    # # Phase 2: Aggregate the graph
+    # new_graph = defaultdict(lambda: defaultdict(float))
+    # for community, nodes in communities.items():
+    #     for u in nodes:
+    #         for v, weight in graph[u].items():
+    #             if node_to_community[v] == community:
+    #                 new_graph[community][community] += weight / 2
+    #             else:
+    #                 new_graph[community][node_to_community[v]] += weight
 
     # Prepare clusters for visualization
     clusters = []
