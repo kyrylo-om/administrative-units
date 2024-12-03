@@ -77,3 +77,33 @@ def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0
                 graph[node_b][node_a] = weight
 
     return graph
+
+def write_file_demo_graph_dot(graph: dict[str, dict[str, float]]) -> None:
+    """
+    Generate and save a Graphviz DOT representation of the given graph to a file.
+
+    This function converts a graph (represented as an adjacency dictionary) into a DOT file format, 
+    which can be used for visualizing the graph using tools like Graphviz.
+
+    Args:
+        graph (dict[str, dict[str, float]]): A dictionary representing the graph, where:
+            - Keys are node names (strings).
+            - Values are dictionaries mapping neighboring nodes to their edge weights.
+
+    Side Effects:
+        Creates a file named `demo_graph.dot` in the current working directory 
+        containing the DOT representation of the graph.
+    """
+    with open('demo_graph.dot', 'w', encoding='UTF-8') as output:
+        output.write("graph G {\n")
+
+        written_edges = set()
+
+        for node, edges in graph.items():
+            for neighbor, weight in edges.items():
+                edge = tuple(sorted((node, neighbor)))
+                if edge not in written_edges:
+                    output.write(f'    {edge[0]} -- {edge[1]} [distance={weight}];\n')
+                    written_edges.add(edge)
+
+        output.write("}\n")
