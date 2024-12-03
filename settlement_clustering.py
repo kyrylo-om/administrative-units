@@ -3,7 +3,7 @@ A module for clustering settlements into administrative units.
 """
 import time
 import os
-import platform
+import webbrowser
 def read_file(file_name: str) -> dict[str, dict[str, float]]:
     """
     Reads the graph from file.
@@ -157,17 +157,7 @@ def command_line_interface():
     if vis_choice == "term":
         visualisation_in_terminal(result_of_clustering)
     elif vis_choice == "browser":
-        visualise(graph,result_of_clustering)
-        # Визначаємо операційну систему та відкриваємо файл відповідною командою
-        system_name = platform.system()
-        if system_name == "Darwin":  # macOS
-            os.system(f"open {current_path}")
-        elif system_name == "Windows":  # Windows
-            os.system(f"start {current_path}")
-        else:  # Для Linux та інших систем
-            os.system(f"xdg-open {current_path}")
-        current_path = os.getcwd()
-        os.system(f"{current_path}\graph.html")
+        webbrowser.open(f"{os.getcwd()}\\graph.html")
         return smooth_text("Thank you for using our program! Have a great day!",default_time_delay)
     while vis_choice != "browser" and vis_choice != "term":
         vis_choice(smooth_text("command not found, please choose the way to see the results:",default_time_delay))
