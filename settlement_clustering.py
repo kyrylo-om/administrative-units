@@ -2,6 +2,9 @@
 A module for clustering settlements into administrative units.
 """
 
+from pyvis.network import Network
+import random
+
 
 import argparse
 import os
@@ -68,14 +71,44 @@ def command_line_interface():
     pass
 
 
-def visualize(clusters: list):
+def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -> None:
     """
-    Visualizes a weighted graph using the pyvis library.
+    Visualizes a weighted graph using the pyvis library. Optional parameter clusters: if not None,
+    paints each node to a color corresponding to its cluster.
 
-    :param clusters: list, The nodes divided to clusters.
+    :param graph: dict, The graph to visualize.
+    :param clusters: list, Optional. A list of clusters of given graph.
     :return: None
     """
-    pass
+    node_clusters = {}
+    central_nodes = set()
+
+    if clusters:
+        for cluster in clusters:
+            for node in cluster["nodes"]:
+                node_clusters[node] = clusters.index(cluster) + 1
+                if "center" in cluster and cluster["center"] == node:
+                    central_nodes.add(node)
+
+    net = Network(notebook=True)
+
+    added_nodes = []
+    for node, edges in graph.items():
+        title = f"Name: {node}" + (f"\nCluster: {node_clusters[node]}" if clusters else "") + f"\nConnections: {graph[node]}"
+        net.add_node(node, size=40 if node in central_nodes else 20, group=node_clusters[node] if clusters else None,
+                     title=title)
+        added_nodes.append(node)
+        for neighbour, distance in edges.items():
+            if neighbour in added_nodes:
+                if clusters:
+                    net.add_edge(node, neighbour, width=distance / 2,
+                                 color="gray" if node_clusters[neighbour] != node_clusters[node] else None)
+                else:
+                    net.add_edge(node, neighbour, width=distance / 2)
+
+    net.force_atlas_2based()
+
+    net.save_graph("graph.html")
 
 
 def main():
