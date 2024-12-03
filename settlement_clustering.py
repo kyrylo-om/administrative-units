@@ -530,18 +530,6 @@ def louvain_algorithm(graph: dict[str, dict[str, float]],
     return clusters
 
 
-def command_line_interface():
-    """
-    The function for handling interaction with the user. For example: how many clusters
-    should there be in the result, or blank.
-
-    Launches all other functions.
-
-    :return: None
-    """
-    pass
-
-
 def print_clusters(clustered_graph):
     """
     visualisation of clustering in terminal
@@ -565,95 +553,6 @@ def print_clusters(clustered_graph):
         result += "=" * 40
     return result
 
-def command_line_interface():
-    """
-    The function for handling interaction with the user. For example: how many clusters
-    should there be in the result, or blank.
-
-    Launches all other functions.
-
-    :return: None
-    """
-    default_time_delay = 0.035
-    def smooth_text(text:str,delay, ending = False): #function for smoothly appearing text
-        """
-        function that smooth_texts text in terminal not instantly but with small time sleep
-        so that this text smooth_texting process can be beautiful
-        """
-        for i, char in enumerate(text):
-            if i == len(text)-1:
-                if ending == True:
-                    print(char,flush=True, end = "")
-                    time.sleep(delay)
-            else:
-                print(char,end="",flush=True)
-                time.sleep(delay)
-    #introduction of the program to user
-    smooth_text("Hello, my dear friend!!\nThis program can help if you want to do some clustering with your data",default_time_delay)
-    smooth_text("Here is some main requirements:\nFile(with data to cluster) format should be .dot",default_time_delay)
-    smooth_text("Also we need your data to be like this:\ngraph\nA — B [distance]",default_time_delay)
-    smooth_text("B — C [distance]",default_time_delay)
-    smooth_text("A — C [distance]",default_time_delay)
-    smooth_text("Where 'A','B','C' - names of the nodes\ndistance - distance between those nodes\nIn addition, whenever you want to quit - just type \"quit\"",default_time_delay)
-    smooth_text("write path to file here",default_time_delay)
-    #check file
-    path_name = input("path to file:")
-    graph = read_file(path_name)
-    check_file_content = validator(graph)
-    while isinstance(check_file_content, str):
-        smooth_text("Please try again",default_time_delay)
-        path_name = input("path to file:")
-        if path_name == "quit":
-            exit()
-        graph = read_file(path_name)
-        check_file_content = validator(graph)
-        if check_file_content == "quit":
-            exit()
-
-    smooth_text("Also please type number of clusters that you want to recieve. Number can be from 1 to 100. If it doesn't matter for you type \"0\"",default_time_delay)
-    number_of_clusters = input("Please type the number of clusters and 0 if it doesn't matter:")
-    while number_of_clusters != 0 and number_of_clusters < 1 and number_of_clusters > 100 and number_of_clusters != "quit" :
-        smooth_text("sorry but it seems you put invalid number of clusters, please try again",default_time_delay)
-        number_of_clusters = input("Please type the number of clusters and 0 if it doesn't matter:")
-    if number_of_clusters == "quit":
-        exit()
-    #choosing algorithm depending on number of clusters
-    if number_of_clusters == 0:
-        smooth_text("Also you may choose which algorithm to choose\n>>>>>>k_medoids\n>>>>>>louvain",default_time_delay)
-        smooth_text("type \"k\" to use k_medoids, \"l\" to use louvain and \"n\" if it doesn't matter",default_time_delay)
-        alg_choice = input(smooth_text("choose algorithm:",default_time_delay))
-        while alg_choice != "l" and alg_choice != "n" and alg_choice != "k" and alg_choice != "quit":
-                smooth_text("sorry but your input is invalid, choose the algorithm by typing one english letter: l,k,n or quit to exit")
-                alg_choice = input(smooth_text("choose algorithm:",default_time_delay))
-        if alg_choice == "k":
-            result_of_clustering = kmedoids_clustering(graph)
-        elif alg_choice == "l":
-            result_of_clustering = louvain_algorithm(graph)
-        elif alg_choice == "n":
-            alg = 0
-            alg = random.randint(1,2)
-            if alg == 1:
-                result_of_clustering = kmedoids_clustering(graph)
-            else:
-                result_of_clustering = louvain_algorithm(graph)
-        elif alg_choice == "quit":
-            exit()
-    if number_of_clusters > 1 and number_of_clusters < 100:
-        result_of_clustering = []
-        result_of_clustering = kmedoids_clustering((graph), number_of_clusters)
-    # visualisation of result
-    smooth_text("Clustering is done! type \"term\" if you want to see the results in terminal and \"browser\"", default_time_delay)
-    smooth_text("if you want to see the results using browser",default_time_delay)
-    vis_choice = input(smooth_text("way of visualisation:",default_time_delay))
-    while vis_choice != "browser" and vis_choice != "term":
-        vis_choice = input(smooth_text("command not found, please choose the way to see the results:",default_time_delay))
-    if vis_choice == "quit":
-        exit()
-    elif vis_choice == "term":
-        smooth_text(print_clusters(result_of_clustering), default_time_delay)
-    elif vis_choice == "browser":
-        webbrowser.open(f"{os.getcwd()}\\graph.html")
-    return smooth_text("Thank you for using our program! Have a great day!",default_time_delay)
 
 def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -> None:
     """
@@ -697,12 +596,10 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="Settlement clustering",
-        description='A module for clustering weighted graphs.',
-        epilog="If you are unsure of what to do, run this script without arguments.",
-        usage="settlement_clustering.py -f PATH [-a ALGORITHM] [-n NUM_OF_CLUSTERS] [-s SEED] [-v]")
-    parser.add_argument('-f', help="path to the file to read your graph from (required)",
-                        metavar="PATH", type=str)
+        prog="settlement_clustering.py",
+        description='A module for clustering weighted graphs.',)
+    parser.add_argument('file', help="path to the file to read your graph from",
+                        metavar="PATH_TO_FILE", type=str)
     parser.add_argument('-a', metavar='ALGORITHM', type=int,
                         help="specifies the algorithm you want to use for clustering. "
                              "1 for k-medoids and 2 for Louvain method (-n must be void)",
@@ -721,79 +618,73 @@ def main():
 
     args = parser.parse_args()
 
-    if args.f is None and args.n is None and not args.visualize:
-        command_line_interface()
-    else:
-        if not args.f:
-            parser.error("the following argument is required: -f/--file")
+    if args.n is not None:
+        if args.n < 0:
+            parser.error("argument -n: number of clusters cannot be less than zero.")
+        elif args.n == 0:
+            parser.error("argument -n: number of clusters cannot be zero. "
+                         "Use without this argument to determine the number of clusters automatically.")
 
-        if args.n is not None:
-            if args.n < 0:
-                parser.error("argument -n: number of clusters cannot be less than zero.")
-            elif args.n == 0:
-                parser.error("argument -n: number of clusters cannot be zero. "
-                             "Use without this argument to determine the number of clusters automatically.")
+    if args.a and args.a not in (1, 2):
+        parser.error("argument -a: value must be 1 or 2")
 
-        if args.a and args.a not in (1, 2):
-            parser.error("argument -a: value must be 1 or 2")
+    if args.a == 2 and args.n is not None:
+        parser.error("argument -n must be void if the chosen algorithm is Louvain")
 
-        if args.a == 2 and args.n is not None:
-            parser.error("argument -n must be void if the chosen algorithm is Louvain")
+    print("\nReading file...")
+    graph = read_file(args.file)
 
-        print("\nReading file...")
-        graph = read_file(args.f)
+    if isinstance(graph, str):
+        print(f"Reading failed: {graph}")
+        exit()
 
-        if isinstance(graph, str):
-            print(f"Reading failed: {graph}")
-            exit()
+    print("Reading successful.")
 
-        print("Reading successful.")
+    print("\nValidating...")
 
-        print("\nValidating...")
+    validating_result = validator(graph)
+    if validating_result is not True:
+        print(f"Validating failed: {validating_result}")
+        exit()
 
-        validating_result = validator(graph)
-        if validating_result is not True:
-            print(f"Validating failed: {validating_result}")
-            exit()
+    print("Validating successful.")
 
-        print("Validating successful.")
+    if args.n is not None and args.n > len(graph):
+        parser.error("argument -n: number of clusters cannot be greater than node count.")
 
-        if args.n is not None and args.n > len(graph):
-            parser.error("argument -n: number of clusters cannot be greater than node count.")
+    if args.s:
+        random.seed(args.s)
 
-        if args.s:
-            random.seed(args.s)
-
-        if args.n is None:
-            if args.a == 1:
-                print("\nFinding optimal cluster count...")
-                optimal_cluster_count = find_optimal_cluster_count(graph)
-                print(f"Optimal cluster count: {optimal_cluster_count}")
-                print(f"\nRunning k-medoids algorithm for {optimal_cluster_count} clusters...")
-                clusters = kmedoids_clustering(graph, optimal_cluster_count)
-            else:
-                print("\nRunning Louvain algorithm...")
-                clusters = louvain_algorithm(graph)
+    if args.n is None:
+        if args.a == 1:
+            print("\nFinding optimal cluster count...")
+            optimal_cluster_count = find_optimal_cluster_count(graph)
+            print(f"Optimal cluster count: {optimal_cluster_count}")
+            print(f"\nRunning k-medoids algorithm for {optimal_cluster_count} clusters...")
+            clusters = kmedoids_clustering(graph, optimal_cluster_count)
         else:
-            print(f"\nRunning k-medoids algorithm for {args.n} clusters...")
-            clusters = kmedoids_clustering(graph, args.n)
+            print("\nRunning Louvain algorithm...")
+            clusters = louvain_algorithm(graph)
+    else:
+        print(f"\nRunning k-medoids algorithm for {args.n} clusters...")
+        clusters = kmedoids_clustering(graph, args.n)
 
-        print("\n")
-        text_clusters = print_clusters(clusters)
-        print(text_clusters)
+    print("\n")
+    text_clusters = print_clusters(clusters)
+    print(text_clusters)
 
-        if args.w is not None:
-            with open(args.w, 'w', encoding="utf-8") as file:
-                file.write(text_clusters)
-            print(f"\nThe result has been recorded to {args.w}")
+    if args.w is not None:
+        with open(args.w, 'w', encoding="utf-8") as file:
+            file.write(text_clusters)
+        print(f"\nThe result has been recorded to {args.w}")
 
-        if args.visualize:
-            print("\nVisualizing result...")
-            visualize(graph, clusters)
-            print("The output HTML file has been recorded to graph.html")
-            print("\nOpening in browser...")
-            webbrowser.open(f"{os.getcwd()}\\graph.html")
-            print("Done")
+    if args.visualize:
+        print("\nVisualizing result...")
+        visualize(graph, clusters)
+        print("The output HTML file has been recorded to graph.html")
+        print("\nOpening in browser...")
+        webbrowser.open(f"{os.getcwd()}\\graph.html")
+        print("Done")
 
 
 if __name__ == "__main__":
