@@ -8,7 +8,9 @@ import argparse
 import os
 import random
 import webbrowser
-import algorithms
+import k_medoids
+import louvain
+import utilities
 
 
 def read_file(file_name: str) -> dict[str, dict[str, float]] | str:
@@ -213,7 +215,7 @@ def validator(graph: dict[str, dict[str, float]]) -> bool | str:
             if not graph or not distance or graph[neighbor].get(node) != distance:
                 return 'The graph must be symmetric'
 
-    distances = algorithms.dijkstra(graph, node)
+    distances = utilities.dijkstra(graph, node)
     if any(dist == float('inf') for dist in distances.values()):
         return 'The graph is not connected - some nodes cannot be reached'
 
@@ -357,16 +359,16 @@ def main():
     if args.n is None:
         if args.a == 1:
             print("\nFinding optimal cluster count...")
-            optimal_cluster_count = algorithms.find_optimal_cluster_count(graph)
+            optimal_cluster_count = k_medoids.find_optimal_cluster_count(graph)
             print(f"Optimal cluster count: {optimal_cluster_count}")
             print(f"\nRunning k-medoids algorithm for {optimal_cluster_count} clusters...")
-            clusters = algorithms.kmedoids_clustering(graph, optimal_cluster_count)
+            clusters = k_medoids.kmedoids_clustering(graph, optimal_cluster_count)
         else:
             print("\nRunning Louvain algorithm...")
-            clusters = algorithms.louvain_algorithm(graph)
+            clusters = louvain.louvain_algorithm(graph)
     else:
         print(f"\nRunning k-medoids algorithm for {args.n} clusters...")
-        clusters = algorithms.kmedoids_clustering(graph, args.n)
+        clusters = k_medoids.kmedoids_clustering(graph, args.n)
 
     print("\n")
     text_clusters = print_clusters(clusters)
