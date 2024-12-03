@@ -1,5 +1,6 @@
 import random
 from faker import Faker
+import argparse
 
 
 def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0,
@@ -110,3 +111,33 @@ def convert_to_dot(graph: dict[str, dict[str, float]], filename: str) -> None:
                     written_edges.add(edge)
 
         output.write("}\n")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog="data_set_generator.py",
+        description='A module for generating weighted graphs.')
+    parser.add_argument('file', help="the name of file to write the graph into (file extension must be .dot)",
+                        metavar="FILENAME", type=str, default="graph.dot")
+    parser.add_argument('-a', help="amount of nodes (default: 5)",
+                        metavar="AMOUNT", type=int, default=5)
+    parser.add_argument('--min', help="min distance between two nodes (default: 0.1)",
+                        metavar="DISTANCE", type=float, default=0.1)
+    parser.add_argument('--max', help="max distance between two nodes (default: 10.0)",
+                        metavar="DISTANCE", type=float, default=10.0)
+    parser.add_argument('-e', help="the probability for generating an extra edge between two nodes (default: 0)",
+                        metavar="PROBABILITY", type=float, default=0)
+    parser.add_argument('-s', help="the random seed to use for generating",
+                        metavar="SEED", type=int, default=None)
+    parser.add_argument('-l', help="use to assign random text labels to nodes", action='store_true')
+
+    args = parser.parse_args()
+
+    if args.a <= 0:
+        parser.error("argument -a: the amount of nodes cannot be zero or less")
+    if args.min > args.max:
+        parser.error("argument --min cannot be lesser than argument --max")
+    if not (0 <= args.e <= 1):
+        parser.error("argument -e: the probability must be in the range of [0, 1]")
+
+    convert_to_dot(make_demo_graph(args.a, args.min, args.max, args.e, args.l, args.s), args.file)
