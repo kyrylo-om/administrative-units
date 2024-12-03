@@ -788,9 +788,12 @@ def main():
             print(f"\nThe result has been recorded to {args.w}")
 
         if args.visualize:
-            print("Visualizing result...")
+            print("\nVisualizing result...")
             visualize(graph, clusters)
+            print("The output HTML file has been recorded to graph.html")
+            print("\nOpening in browser...")
             webbrowser.open(f"{os.getcwd()}\\graph.html")
+            print("Done")
 
 
 if __name__ == "__main__":
