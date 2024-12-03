@@ -204,6 +204,38 @@ def kmedoids_clustering(graph: dict[str, dict[str, float]],\
     return output_clustering
 
 
+def find_optimal_cluster_count(graph: dict[str, dict[str, float]]) -> int:
+    """
+    Finds the optimal number of clusters using the Elbow method.
+
+    :param graph: dict, The graph to find optimal number of clusters for.
+    :return: int, The optimal number of clusters.
+    """
+    wcss = []
+
+    for i in range(1, len(graph) + 1):
+        clusters = kmedoids_clustering(graph, i)
+        distances_sum = 0
+        for cluster in clusters:
+            cluster_nodes = {key: value for key, value in graph.items() if key in cluster['nodes']}
+            distances_sum += sum(d**2 for d in dijkstra(cluster_nodes, cluster['center']).values())
+
+        wcss.append(distances_sum)
+
+    median = sum(wcss) / len(wcss)
+
+    optimal_count = 0
+    min_diff = float('inf')
+    for x in wcss:
+        if abs(median - x) < min_diff:
+            min_diff = abs(median - x)
+            optimal_count += 1
+        else:
+            break
+
+    return optimal_count
+
+
 def command_line_interface():
     """
     The function for handling interaction with the user. For example: how many clusters
