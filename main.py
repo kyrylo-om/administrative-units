@@ -295,7 +295,7 @@ def main():
         return result
 
     parser = argparse.ArgumentParser(
-        prog="settlement_clustering.py",
+        prog="main.py",
         description='A module for clustering weighted graphs.', )
     parser.add_argument('file', help="path to the file to read your graph from",
                         metavar="PATH_TO_FILE", type=str)
