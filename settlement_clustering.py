@@ -220,30 +220,6 @@ def validator(graph: dict[str, dict[str, float]]) -> bool | str:
     return True
 
 
-def print_clusters(clustered_graph):
-    """
-    visualisation of clustering in terminal
-    """
-    result = ""
-    result += "=" * 40
-    result += "\nClustering Results:\n"
-    result += "=" * 40
-    num = 1
-    for cluster in clustered_graph:
-        if 'center' in cluster:
-            centre = cluster['center']
-            result += f"\n\nCluster {num} (central node: {centre})\n"
-        else:
-            result += f"\n\nCluster {num}:\n"
-        nodes = cluster['nodes']
-        for node in nodes:
-            result += f"\n  - {node}"
-        num += 1
-        result += "\n\n"
-        result += "=" * 40
-    return result
-
-
 def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -> None:
     """
     Visualizes a weighted graph using the pyvis library. Optional parameter clusters: if not None,
@@ -286,6 +262,38 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
 
 
 def main():
+    """
+    The main function which handles user interaction using argparse.
+    Launches all other functions.
+
+    :return: None
+    """
+
+    def print_clusters(clustered_graph: list):
+        """
+        Prints the clusters to the command line.
+
+        :param clustered_graph: list, A list of nodes divided to clusters.
+        """
+        result = ""
+        result += "=" * 40
+        result += "\nClustering Results:\n"
+        result += "=" * 40
+        num = 1
+        for cluster in clustered_graph:
+            if 'center' in cluster:
+                centre = cluster['center']
+                result += f"\n\nCluster {num} (central node: {centre})\n"
+            else:
+                result += f"\n\nCluster {num}:\n"
+            nodes = cluster['nodes']
+            for node in nodes:
+                result += f"\n  - {node}"
+            num += 1
+            result += "\n\n"
+            result += "=" * 40
+        return result
+
     parser = argparse.ArgumentParser(
         prog="settlement_clustering.py",
         description='A module for clustering weighted graphs.', )
