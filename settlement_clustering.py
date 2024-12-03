@@ -61,27 +61,22 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
     """
     # Check file extension
     if not file_name.endswith(".dot"):
-        print("File must have a .dot extension.")
-        return None 
+        return "File must have a .dot extension."
 
     # Try to open the file
     try:
         with open(file_name, "r", encoding="utf-8") as file:
             lines = file.readlines()
     except FileNotFoundError:
-        print(f"File '{file_name}' not found.")
-        return None
+        return f"File '{file_name}' not found."
     except IOError:
-        print(f"Error reading the file '{file_name}'.")
-        return None
+        return f"Error reading the file '{file_name}'."
 
     # Check the format of the first and last lines
     if not lines[0].strip().startswith("graph ") or not lines[0].strip().endswith("{"):
-        print("File must start with 'graph <name> {'.")
-        return None
+        return "File must start with 'graph <name> {'."
     if not lines[-1].strip() == "}":
-        print("File must end with '}'.")
-        return None
+        return "File must end with '}'."
     graph = {}
 
     # Process graph lines
@@ -93,8 +88,7 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
             or "[distance=" not in line
             or not line.endswith("];")
         ):
-            print (f"Incorrect line format: '{line}'")
-            return None
+            return f"Incorrect line format: '{line}'"
 
         # Parse the line
         try:
@@ -105,8 +99,7 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
             node2 = node2.strip()
             distance = float(distance_part.rstrip("];").strip())
         except (ValueError, TypeError, IndexError) as e:
-            print(f"Error in line '{line}': {e}")
-            return None
+            return f"Error in line '{line}': {e}"
         # Add edges to the graph
         if node1 not in graph:
             graph[node1] = {}
@@ -118,9 +111,6 @@ def read_file(file_name: str) -> dict[str, dict[str, float]]:
         graph[node2][node1] = distance
 
     return graph
-
-
-# print(read_file('ukraine.dot'))
 
 
 def dbscan(

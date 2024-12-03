@@ -67,5 +67,3 @@ def generator(
 
     return graph
 
-
-print(generator())
