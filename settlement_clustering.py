@@ -563,7 +563,7 @@ def print_clusters(clustered_graph):
         num += 1
         result += "\n\n"
         result += "=" * 40
-        return result
+    return result
 
 def command_line_interface():
     """
