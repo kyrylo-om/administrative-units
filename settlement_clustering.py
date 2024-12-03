@@ -102,4 +102,4 @@ def visualize(graph: dict[str, dict[str, float]], clusters: list[dict] = None) -
 
     net.force_atlas_2based()
 
-    net.show("graph.html")
+    net.save_graph("graph.html")
