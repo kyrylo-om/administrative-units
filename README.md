@@ -71,7 +71,8 @@ python main.py "graph.dot" -n 4
 If you wish to generate a file to work with for testing or other purposes, you may use the `dataset_generator.py` module. 
 Its purpose is to generates highly customizable weighted graphs you can use in the main module right away.
 
-The usage is similar to the `main.py`. (Please read **Step 3** if not familiar with arguments). Launch the module like this:
+The usage is similar to the `main.py`. (Please read **Step 3** if not familiar with arguments). To launch the module 
+with default arguments type this into the terminal:
 
 ```commandline
 python dataset_generator.py "FILE.dot"
@@ -87,6 +88,7 @@ Where FILE.dot is the path to a file you want to record the graph into. The file
 * **-e** : Specifies the probability for an extra edge to occur between two nodes. Accepts a value between [0, 1].
 * **-s** : Specifies the random seed to use for generating. Use when you want to get a specific non-changing result. Accepts int.
 * **-l** : Use to assign random text labels to nodes. Does not require a value.
+* **-h** : Use to show help message. Does not require a value.
 
 Running the generator to create a graph containing 100 nodes might look like this:
 
