@@ -250,20 +250,13 @@ As well as:
 ### Roman Pempus
 Developed the following functionality:
 
-* A function for user interaction `command_line_interface()`. Now deprecated.
-
-As well as:
-
-* Wrote down insights from every meeting.
+* Printing clustering results. Function `print_clusters()`
+* A function for user interaction `command_line_interface()`. Was not used in the final product due to inoperability.
 
 ### Mykhailo Brytan
 Developed the following functionality:
 
 * Validating the input file. Function `validator()`.
-
-As well as:
-
-* Helped with the presentation.
 
 ### Sofiia Pereima
 Developed the following functionality:
