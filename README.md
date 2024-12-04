@@ -3,6 +3,98 @@
 This project provides tools for clustering graph-based data, generating datasets, and visualizing results. Below is a 
 detailed breakdown of the modules, supported algorithms, data representations, and visualization capabilities.
 
+# How to use
+
+### Introduction
+
+The program contains several modules, but you only need to launch main.py using the command line. Note that the others 
+are still necessary for the program to work correctly.
+
+### Step 0: Prepare the data
+
+This program works with weighted graphs recorded as .dot files. The file must have the following structure:
+
+```
+graph GRAPH_NAME {
+    A -- B [distance=DISTANCE];
+    B -- C [distance=DISTANCE];
+    A -- C [distance=DISTANCE];
+}
+```
+
+Where A, B and C are the names of your nodes, GRAPH_NAME is the name of your graph and DISTANCE is the respective 
+distance between the two specified nodes (a weighted edge). Not every node must have a connection with every other, 
+but it is required that an alternative path exists for reaching each one. That effectively means that your graph must be 
+connected.
+
+If you do not have a file to work with, there is an option to use the `dataset_generator.py` module. Please refer to **Step 4**.
+
+### Step 1 : Opening the Terminal
+
+To get started, open Terminal in the folder containing the program. For Windows, you can achieve this by using the cd command or 
+by opening the folder in File Explorer and choosing the option "Open in Terminal" in the right-click menu.
+
+### Step 2: Launching the program
+
+Type the following command into the terminal: 
+```commandline
+python main.py "FILE.dot"
+```
+Where FILE.dot is the path to your 
+weighted graph in the form of a .dot file. Executing this will apply the default clustering algorithm to your graph and 
+print the result into console.
+
+### Step 3: Advanced
+
+For advanced clustering, the module `main.py` has several arguments you can specify when running the program. For a 
+detailed list of these arguments, type `python main.py --help` or refer to the following instructions:
+
+To run the program with an argument, type `python main.py "FILE.dot"` as usual and then the arguments you want to use. 
+Most of the arguments require a value to be passed to them, so be sure to specify it after the argument's name.
+
+Running the program to divide a graph into 4 clusters might look like this:
+
+```commandline
+python main.py "graph.dot" -n 4
+```
+
+**List of optional arguments:**
+
+* **-a** : Specifies algorithm. Accepts 1 or 2: 1 for k-medoids algorithm and 2 for Louvain method.
+* **-n** : Specifies the number of clusters to divide the graph into. Accepts int.
+* **-s** : Specifies the random seed to use for clustering. Use when you want to get a specific non-changing result. Accepts int. 
+* **-w** : Specifies the path to a file to write the clustering results into. Does not create a file when left blank. Accepts str.
+* **-v** : Use to visualize the result in your web browser. Does not require a value.
+
+### Step 4: Using `dataset_generator.py`
+
+If you wish to generate a file to work with for testing or other purposes, you may use the `dataset_generator.py` module. 
+Its purpose is to generates highly customizable weighted graphs you can use in the main module right away.
+
+The usage is similar to the `main.py`. (Please read **Step 3** if not familiar with arguments). Launch the module like this:
+
+```commandline
+python dataset_generator.py "FILE.dot"
+```
+
+Where FILE.dot is the path to a file you want to record the graph into. The file may not exist - the program will create it.
+
+**List of optional arguments:**
+
+* **-a** : Specifies the number of nodes in the graph. Accepts int.
+* **--min** : Specifies the min distance between two nodes. Accepts float.
+* **--max** : Specifies the max distance between two nodes. Accepts float. 
+* **-e** : Specifies the probability for an extra edge to occur between two nodes. Accepts a value between [0, 1].
+* **-s** : Specifies the random seed to use for generating. Use when you want to get a specific non-changing result. Accepts int.
+* **-l** : Use to assign random text labels to nodes. Does not require a value.
+
+Running the generator to create a graph containing 100 nodes might look like this:
+
+```commandline
+python main.py "graph.dot" -a 100
+```
+
+# Documenation
 
 ## Modules
 
