@@ -7,7 +7,7 @@ from faker import Faker
 import argparse
 
 
-def make_demo_graph(amount: int = 5, minimum: float = 0.1, maximum: float = 10.0,
+def make_demo_graph(amount: int = 5, minimum: float = 1.0, maximum: float = 2.0,
                     extra_edges_prob: float = 0.0001, node_labels: bool = False, seed: int = None) -> dict[str, dict[str, float]]:
     """
     Generate a connected, undirected weighted graph with optional extra edges.
